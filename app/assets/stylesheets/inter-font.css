@@ -1,0 +1,13 @@
+/* app/assets/stylesheets/inter-font.css */
+@font-face {
+    font-family: 'Inter';
+    src: font-url('Inter-VariableFont_slnt,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: oblique 0deg 10deg;
+    font-display: swap;
+  }
+  
+  /* Optional: Set Inter as default font */
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }

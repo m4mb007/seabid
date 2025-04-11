@@ -1,0 +1,129 @@
+<div class="bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mx-auto max-w-2xl">
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Payment Details</h1>
+
+      <div class="mt-8">
+        <div class="space-y-12">
+          <div class="border-b border-gray-900/10 pb-12">
+            <h2 class="text-base font-semibold leading-7 text-gray-900">Plate Number Details</h2>
+            <p class="mt-1 text-sm leading-6 text-gray-600">Review your plate number details before proceeding with payment.</p>
+
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Plate Number</label>
+                <div class="mt-2">
+                  <p class="text-lg font-semibold text-gray-900"><%= @plate_number.number %></p>
+                </div>
+              </div>
+
+              <div class="sm:col-span-3">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                <div class="mt-2">
+                  <p class="text-lg font-semibold text-gray-900"><%= @plate_number.category.titleize %></p>
+                </div>
+              </div>
+
+              <div class="sm:col-span-3">
+                <label class="block text-sm font-medium leading-6 text-gray-900">Your Bid Amount</label>
+                <div class="mt-2">
+                  <p class="text-lg font-semibold text-gray-900">AED <%= number_with_delimiter(@bid.amount) %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-b border-gray-900/10 pb-12">
+            <h2 class="text-base font-semibold leading-7 text-gray-900">Payment Method</h2>
+            <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your payment details.</p>
+
+            <%= form_with(model: [@plate_number, @payment], local: true, class: "mt-10", data: { turbo: false }) do |f| %>
+              <div class="mt-10">
+                <div id="card-element" class="mt-2">
+                  <!-- A Stripe Element will be inserted here. -->
+                </div>
+                <!-- Used to display form errors. -->
+                <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600"></div>
+              </div>
+
+              <div class="mt-6 flex items-center justify-end gap-x-6">
+                <%= link_to "Cancel", plate_number_path(@plate_number), class: "text-sm font-semibold leading-6 text-gray-900" %>
+                <%= f.submit "Complete Payment", class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create a Stripe client.
+      var stripe = Stripe('<%= Rails.application.credentials.stripe[:publishable_key] %>');
+
+      // Create an instance of Elements.
+      var elements = stripe.elements();
+
+      // Custom styling can be passed to options when creating an Element.
+      var style = {
+        base: {
+          color: '#32325d',
+          fontFamily: '"Inter", Helvetica, sans-serif',
+          fontSmoothing: 'antialiased',
+          fontSize: '16px',
+          '::placeholder': {
+            color: '#aab7c4'
+          }
+        },
+        invalid: {
+          color: '#fa755a',
+          iconColor: '#fa755a'
+        }
+      };
+
+      // Create an instance of the card Element.
+      var card = elements.create('card', {style: style});
+
+      // Add an instance of the card Element into the `card-element` <div>.
+      card.mount('#card-element');
+
+      // Handle real-time validation errors from the card Element.
+      card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+
+      // Handle form submission.
+      var form = document.querySelector('form');
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+          if (result.error) {
+            // Inform the user if there was an error.
+            var errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+          } else {
+            // Send the token to your server.
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'payment[stripe_token]');
+            hiddenInput.setAttribute('value', result.token.id);
+            form.appendChild(hiddenInput);
+
+            // Submit the form
+            form.submit();
+          }
+        });
+      });
+    });
+  </script>
+<% end %>

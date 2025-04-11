@@ -1,0 +1,131 @@
+<div class="bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
+      <div>
+        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100">
+          <div class="h-full w-full flex items-center justify-center text-6xl font-bold text-gray-900">
+            <%= @plate_number.number %>
+          </div>
+        </div>
+
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h2 class="text-sm font-medium text-gray-900">Details</h2>
+          <div class="mt-4 space-y-6">
+            <p class="text-sm text-gray-600">
+              <span class="font-medium">Category:</span> <%= @plate_number.category.titleize %>
+            </p>
+            <p class="text-sm text-gray-600">
+              <span class="font-medium">Status:</span>
+              <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                <%= case @plate_number.status
+                    when 'available' then 'bg-blue-50 text-blue-700 ring-blue-600/20'
+                    when 'booked' then 'bg-yellow-50 text-yellow-700 ring-yellow-600/20'
+                    when 'paid' then 'bg-green-50 text-green-700 ring-green-600/20'
+                    end %>">
+                <%= @plate_number.status.titleize %>
+              </span>
+            </p>
+            <p class="text-sm text-gray-600">
+              <span class="font-medium">Starting Price:</span> AED <%= number_with_delimiter(@plate_number.starting_price) %>
+            </p>
+            <p class="text-sm text-gray-600">
+              <span class="font-medium">Current Price:</span> AED <%= number_with_delimiter(@plate_number.current_price) %>
+            </p>
+            <p class="text-sm text-gray-600">
+              <span class="font-medium">Time Remaining:</span> <%= distance_of_time_in_words(Time.current, @plate_number.end_time) %>
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 border-t border-gray-200 pt-10">
+          <h2 class="text-sm font-medium text-gray-900">Recent Bids</h2>
+          <div class="mt-4 flow-root">
+            <div class="-my-4 divide-y divide-gray-200">
+              <% @recent_bids.each do |bid| %>
+                <div class="flex items-center space-x-4 py-4">
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-gray-900">
+                      <%= bid.user.email %>
+                    </p>
+                    <p class="truncate text-sm text-gray-500">
+                      <%= time_ago_in_words(bid.created_at) %> ago
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      AED <%= number_with_delimiter(bid.amount) %>
+                    </span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 lg:mt-0">
+        <h2 class="text-2xl font-bold tracking-tight text-gray-900">Place Your Bid</h2>
+
+        <div class="mt-10">
+          <% if user_signed_in? %>
+            <% if @plate_number.status == 'available' %>
+              <%= form_with(model: [@plate_number, @bid], local: true, class: "mt-6") do |f| %>
+                <div class="sm:flex-auto">
+                  <div class="mt-2">
+                    <%= f.label :amount, "Bid Amount (AED)", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                      <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span class="text-gray-500 sm:text-sm">AED</span>
+                      </div>
+                      <%= f.number_field :amount, min: @plate_number.current_price + 1, step: "0.01", class: "block w-full rounded-md border-0 py-1.5 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "0.00" %>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Minimum bid: AED <%= number_with_delimiter(@plate_number.current_price + 1) %></p>
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <%= f.submit "Place Bid", class: "flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+                </div>
+              <% end %>
+
+              <% if @highest_bid&.user == current_user %>
+                <div class="mt-6">
+                  <%= link_to "Proceed to Payment", new_plate_number_payment_path(@plate_number), class: "flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="rounded-md bg-yellow-50 p-4">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800">This plate number is no longer available for bidding</h3>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="rounded-md bg-blue-50 p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-blue-800">Please sign in to place a bid</h3>
+                  <div class="mt-2">
+                    <%= link_to "Sign in", new_user_session_path, class: "text-sm font-medium text-blue-600 hover:text-blue-500" %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<%# app/views/home/my_bids.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">My Plate Number Bids</h1>
+
+  <div class="mb-4 flex space-x-4">
+    <%= link_to "My Bids", my_bids_path, class: "px-4 py-2 font-medium #{current_page?(my_bids_path) ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}" %>
+    <%= link_to "My Payments", my_payments_path, class: "px-4 py-2 font-medium #{current_page?(my_payments_path) ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}" %>
+  </div>
+
+  <% if @bids.any? %>
+    <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+      <table class="min-w-full divide-y divide-gray-300">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Your Bid</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @bids.each do |bid| %>
+            <% plate = bid.plate_number %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap font-bold text-lg">
+                <%= plate.number %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= plate.category.titleize %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <%= number_to_currency(bid.amount) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= number_to_currency(plate.current_price) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                  <%= bid_status_color(plate, bid) %>">
+                  <%= bid_status_text(plate, bid) %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= plate.end_time.strftime("%b %d, %Y %H:%M") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <%= link_to "View", plate_number_path(plate), class: "text-blue-600 hover:text-blue-900" %>
+                
+                <% if plate.status == 'available' && plate.end_time > Time.current %>
+                  <%= link_to "Increase", new_plate_number_bid_path(plate), 
+                      class: "text-indigo-600 hover:text-indigo-900" %>
+                <% elsif bid.amount == plate.current_price && plate.status == 'sold' %>
+                  <%= link_to "Pay Now", new_plate_number_payment_path(plate),
+                      class: "text-green-600 hover:text-green-900 font-bold" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <%= paginate @bids %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No bids yet</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by bidding on available plate numbers.</p>
+      <div class="mt-6">
+        <%= link_to "Browse Plate Numbers", plate_numbers_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      </div>
+    </div>
+  <% end %>
+</div>

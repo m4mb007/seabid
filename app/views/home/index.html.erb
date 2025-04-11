@@ -1,0 +1,80 @@
+<div class="bg-white">
+  <div class="relative isolate px-6 pt-14 lg:px-8">
+    <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Premium Plate Numbers Auction Platform</h1>
+        <p class="mt-6 text-lg leading-8 text-gray-600">Bid on exclusive plate numbers and make them yours. Join our platform to participate in auctions for premium, popular, and unique plate numbers.</p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <%= link_to "View Plate Numbers", plate_numbers_path, class: "rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+          <% unless user_signed_in? %>
+            <%= link_to "Sign up", new_user_registration_path, class: "text-sm font-semibold leading-6 text-gray-900" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:max-w-none">
+      <h2 class="text-2xl font-bold text-gray-900">Featured Plate Numbers</h2>
+
+      <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+        <% @featured_plates.each do |plate| %>
+          <div class="group relative">
+            <div class="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
+              <div class="h-full w-full flex items-center justify-center text-4xl font-bold text-gray-900">
+                <%= plate.number %>
+              </div>
+            </div>
+            <h3 class="mt-6 text-sm text-gray-500">
+              <span class="absolute inset-0"></span>
+              Category: <%= plate.category.titleize %>
+            </h3>
+            <p class="text-base font-semibold text-gray-900">Current Price: AED <%= number_with_delimiter(plate.current_price) %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mx-auto max-w-2xl py-16 lg:max-w-none">
+      <h2 class="text-2xl font-bold text-gray-900">Categories</h2>
+
+      <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+        <% @categories.each do |category| %>
+          <%= link_to plate_numbers_path(q: { category_eq: category }), class: "group relative" do %>
+            <div class="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
+              <div class="h-full w-full flex items-center justify-center text-2xl font-bold text-gray-900">
+                <%= category.titleize %> Numbers
+              </div>
+            </div>
+            <h3 class="mt-6 text-sm text-gray-500">
+              <span class="absolute inset-0"></span>
+              Browse <%= category.titleize %> Numbers
+            </h3>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mx-auto max-w-2xl py-16 lg:max-w-none">
+      <h2 class="text-2xl font-bold text-gray-900">Ending Soon</h2>
+
+      <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+        <% @ending_soon.each do |plate| %>
+          <div class="group relative">
+            <div class="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
+              <div class="h-full w-full flex items-center justify-center text-4xl font-bold text-gray-900">
+                <%= plate.number %>
+              </div>
+            </div>
+            <h3 class="mt-6 text-sm text-gray-500">
+              <span class="absolute inset-0"></span>
+              Ends in: <%= distance_of_time_in_words(Time.current, plate.end_time) %>
+            </h3>
+            <p class="text-base font-semibold text-gray-900">Current Price: AED <%= number_with_delimiter(plate.current_price) %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
