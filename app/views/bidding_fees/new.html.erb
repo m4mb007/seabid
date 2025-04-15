@@ -1,45 +1,13 @@
 <div class="bg-white">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
     <div class="mx-auto max-w-2xl">
-      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Payment Details</h1>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Pay Bidding Fee</h1>
+      <p class="mt-2 text-sm text-gray-600">To participate in auctions, a one-time bidding fee of RM <%= SeaBid::BIDDING_FEE %> is required.</p>
 
       <div class="mt-8">
         <div class="space-y-12">
           <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Plate Number Details</h2>
-            <p class="mt-1 text-sm leading-6 text-gray-600">Review your plate number details before proceeding with payment.</p>
-
-            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div class="sm:col-span-3">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Plate Number</label>
-                <div class="mt-2">
-                  <p class="text-lg font-semibold text-gray-900"><%= @plate_number.number %></p>
-                </div>
-              </div>
-
-              <div class="sm:col-span-3">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Category</label>
-                <div class="mt-2">
-                  <p class="text-lg font-semibold text-gray-900"><%= @plate_number.category.titleize %></p>
-                </div>
-              </div>
-
-              <div class="sm:col-span-3">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Amount to Pay</label>
-                <div class="mt-2">
-                  <p class="text-lg font-semibold text-gray-900">RM <%= number_with_delimiter(@plate_number.current_price) %></p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Payment Method</h2>
-            <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your payment details.</p>
-
-            <%= form_with(url: plate_number_payments_path(@plate_number), method: :post, local: true, class: "mt-10", id: "payment-form", data: { turbo: false }) do |f| %>
-              <%= f.hidden_field :authenticity_token, value: form_authenticity_token %>
-              
+            <%= form_tag bidding_fees_path, id: 'payment-form', class: "mt-10", data: { turbo: false } do %>
               <div class="mt-10">
                 <div id="card-element" class="mt-2 p-3 border rounded-md">
                   <!-- A Stripe Element will be inserted here. -->
@@ -48,13 +16,11 @@
                 <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600"></div>
               </div>
 
-              #<%= hidden_field_tag 'payment[stripe_token]', nil, id: 'stripe_token' %>
-              <%= f.hidden_field :stripe_token, id: 'stripe_token' %>
-
+              <%= hidden_field_tag 'stripe_token', '', id: 'stripe_token' %>
 
               <div class="mt-6 flex items-center justify-end gap-x-6">
-                <%= link_to "Cancel", plate_number_path(@plate_number), class: "text-sm font-semibold leading-6 text-gray-900" %>
-                <%= f.submit "Complete Payment", class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600", data: { disable_with: 'Processing...' } %>
+                <%= link_to "Cancel", plate_numbers_path, class: "text-sm font-semibold leading-6 text-gray-900" %>
+                <%= submit_tag "Pay RM #{SeaBid::BIDDING_FEE}", class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600", data: { disable_with: 'Processing...' } %>
               </div>
             <% end %>
           </div>
@@ -116,42 +82,47 @@
         event.preventDefault();
 
         if (submitted) return;
-        submitted = true;
-
-        submitButton.disabled = true;
-        submitButton.value = 'Processing...';
 
         // Clear any previous errors
         var errorElement = document.getElementById('card-errors');
         errorElement.textContent = '';
 
+        submitButton.disabled = true;
+        submitButton.value = 'Processing...';
+
         stripe.createToken(card).then(function(result) {
           if (result.error) {
             submitted = false;
             submitButton.disabled = false;
-            submitButton.value = 'Complete Payment';
+            submitButton.value = 'Pay RM <%= SeaBid::BIDDING_FEE %>';
             errorElement.textContent = result.error.message;
           } else {
-            console.log('Token created:', result.token.id); // Debug log
-            document.getElementById('stripe_token').value = result.token.id;
+            // Debug log
+            console.log('Token created:', result.token.id);
+            
+            // Set the token value
+            var tokenInput = document.getElementById('stripe_token');
+            tokenInput.value = result.token.id;
             
             // Debug log the form data
-            console.log('Form data:', new FormData(form));
-
-            console.log("Token value in input:", document.getElementById('stripe_token').value); // Debug
-
+            var formData = new FormData(form);
+            console.log('Form data:');
+            for (var pair of formData.entries()) {
+              console.log(pair[0] + ': ' + pair[1]);
+            }
             
             // Submit the form
+            submitted = true;
             form.submit();
           }
         }).catch(function(error) {
           submitted = false;
           submitButton.disabled = false;
-          submitButton.value = 'Complete Payment';
+          submitButton.value = 'Pay RM <%= SeaBid::BIDDING_FEE %>';
           errorElement.textContent = error.message || 'An error occurred while processing your payment.';
-          console.error('Stripe error:', error); // Debug log
+          console.error('Stripe error:', error);
         });
       });
     });
   </script>
-<% end %>
+<% end %> 

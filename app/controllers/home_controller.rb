@@ -11,6 +11,11 @@ class HomeController < ApplicationController
     @my_active_bids = current_user.bids.joins(:plate_number)
                                  .where(plate_numbers: { status: 'available' })
                                  .order(created_at: :desc)
+                                 
+    @my_purchased_plates = current_user.purchased_plates
+                                     .where(status: %w[booked paid])
+                                     .order(created_at: :desc)
+                                     
     @won_bids = current_user.bids.joins(:plate_number)
                            .where(plate_numbers: { status: %w[booked paid] })
                            .order(created_at: :desc)

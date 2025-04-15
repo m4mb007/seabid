@@ -9,10 +9,13 @@ class PlateNumber < ApplicationRecord
   validates :starting_price, presence: true, numericality: { greater_than: 0 }
   validates :current_price, presence: true, numericality: { greater_than_or_equal_to: :starting_price }
   validates :end_time, presence: true
+  validates :sale_type, presence: true, inclusion: { in: %w[auction direct] }
   
   scope :available, -> { where(status: 'available') }
-  scope :ending_soon, -> { where('end_time <= ?', 24.hours.from_now).available }
+  scope :ending_soon, -> { where('end_time <= ?', 24.hours.from_now).available.auction }
   scope :by_category, ->(category) { where(category: category) }
+  scope :auction, -> { where(sale_type: 'auction') }
+  scope :direct, -> { where(sale_type: 'direct') }
   
   def time_remaining
     return 0 if end_time.past?
@@ -23,10 +26,17 @@ class PlateNumber < ApplicationRecord
     bids.order(amount: :desc).first
   end
 
+  def direct_purchase?
+    sale_type == 'direct'
+  end
+
+  def auction?
+    sale_type == 'auction'
+  end
   
   def self.ransackable_attributes(auth_object = nil)
     # List only the attributes you want to be searchable
-    ["number", "category", "status", "current_price", "starting_price", "end_time"]
+    ["number", "category", "status", "current_price", "starting_price", "end_time", "sale_type"]
   end
 
   # Optional: If you want to control which associations can be searched

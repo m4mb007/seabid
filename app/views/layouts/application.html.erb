@@ -41,6 +41,10 @@
                 <% if user_signed_in? %>
                   <%= link_to "Dashboard", dashboard_path, class: "inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" %>
                   <%= link_to "My Bids", my_bids_path, class: "inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700" %>
+                  <% if current_user.admin? %>
+                    <%= link_to "Add Plate Number", new_plate_number_path, class: "inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-blue-600 hover:border-blue-300 hover:text-blue-700" %>
+                    <%= link_to "All Payments", admin_payments_path, class: "inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-blue-600 hover:border-blue-300 hover:text-blue-700" %>
+                  <% end %>
                 <% end %>
               </div>
             </div>

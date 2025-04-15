@@ -32,15 +32,19 @@
                 <%= plate.category.titleize %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                <%= number_to_currency(bid.amount) %>
+                RM <%= number_with_delimiter(bid.amount) %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <%= number_to_currency(plate.current_price) %>
+                RM <%= number_with_delimiter(plate.current_price) %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                  <%= bid_status_color(plate, bid) %>">
-                  <%= bid_status_text(plate, bid) %>
+                  <%= case plate.status
+                      when 'available' then 'bg-blue-100 text-blue-800'
+                      when 'booked' then 'bg-yellow-100 text-yellow-800'
+                      when 'paid' then 'bg-green-100 text-green-800'
+                      end %>">
+                  <%= plate.status.titleize %>
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -52,7 +56,7 @@
                 <% if plate.status == 'available' && plate.end_time > Time.current %>
                   <%= link_to "Increase", new_plate_number_bid_path(plate), 
                       class: "text-indigo-600 hover:text-indigo-900" %>
-                <% elsif bid.amount == plate.current_price && plate.status == 'sold' %>
+                <% elsif bid.amount == plate.current_price && plate.status == 'booked' %>
                   <%= link_to "Pay Now", new_plate_number_payment_path(plate),
                       class: "text-green-600 hover:text-green-900 font-bold" %>
                 <% end %>
@@ -80,3 +84,9 @@
     </div>
   <% end %>
 </div>
+
+<%= hidden_field_tag 'payment[stripe_token]', '', id: 'stripe_token' %>
+
+<script>
+document.getElementById('stripe_token').value = result.token.id;
+</script>

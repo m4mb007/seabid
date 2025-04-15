@@ -1,7 +1,13 @@
 class BidsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_plate_number
+  before_action :check_bidding_fee_paid
   
+  def new
+    @bid = Bid.new
+    @current_price = @plate_number.current_price
+  end
+
   def create
     @bid = current_user.bids.build(bid_params)
     @bid.plate_number = @plate_number
@@ -25,5 +31,11 @@ class BidsController < ApplicationController
   
   def bid_params
     params.require(:bid).permit(:amount)
+  end
+
+  def check_bidding_fee_paid
+    unless current_user.can_bid?
+      redirect_to new_bidding_fee_path, alert: 'You need to pay the bidding fee before placing bids.'
+    end
   end
 end

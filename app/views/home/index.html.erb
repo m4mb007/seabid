@@ -30,7 +30,7 @@
               <span class="absolute inset-0"></span>
               Category: <%= plate.category.titleize %>
             </h3>
-            <p class="text-base font-semibold text-gray-900">Current Price: AED <%= number_with_delimiter(plate.current_price) %></p>
+            <p class="text-base font-semibold text-gray-900">Current Price: RM <%= number_with_delimiter(plate.current_price) %></p>
           </div>
         <% end %>
       </div>
@@ -71,7 +71,7 @@
               <span class="absolute inset-0"></span>
               Ends in: <%= distance_of_time_in_words(Time.current, plate.end_time) %>
             </h3>
-            <p class="text-base font-semibold text-gray-900">Current Price: AED <%= number_with_delimiter(plate.current_price) %></p>
+            <p class="text-base font-semibold text-gray-900">Current Price:RM <%= number_with_delimiter(plate.current_price) %></p>
           </div>
         <% end %>
       </div>

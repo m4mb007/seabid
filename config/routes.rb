@@ -1,16 +1,22 @@
 Rails.application.routes.draw do
   devise_for :users
   
-  root 'home#index'
-# config/routes.rb
-resources :plate_numbers do
-  resources :bids, only: [:create, :new]  # This will create the needed routes
-  resources :payments, only: [:create, :new]
-end
+  resources :plate_numbers do
+    resources :bids, only: [:new, :create]
+    resources :payments, only: [:new, :create]
+  end
 
+  resources :bidding_fees, only: [:new, :create]
+  
+  namespace :admin do
+    resources :payments, only: [:index, :show]
+  end
+  
   get 'dashboard', to: 'home#dashboard'
   get 'my_bids', to: 'home#my_bids'
   get 'my_payments', to: 'home#my_payments'
+  
+  root 'home#index'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

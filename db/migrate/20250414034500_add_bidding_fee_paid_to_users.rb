@@ -1,0 +1,5 @@
+class AddBiddingFeePaidToUsers < ActiveRecord::Migration[8.0]
+  def change
+    add_column :users, :bidding_fee_paid, :boolean, default: false
+  end
+end 
