@@ -34,23 +34,106 @@
           </div>
 
           <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-base font-semibold leading-7 text-gray-900">Payment Method</h2>
-            <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your payment details.</p>
+            <h2 class="text-base font-semibold leading-7 text-gray-900">Billing Information</h2>
+            <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your billing details for this purchase.</p>
 
-            <%= form_with(url: plate_number_payments_path(@plate_number), method: :post, local: true, class: "mt-10", id: "payment-form", data: { turbo: false }) do |f| %>
+            <%= form_with(url: plate_number_payments_path(@plate_number), method: :post, local: true, class: "mt-6", id: "payment-form", data: { turbo: false }) do |f| %>
               <%= f.hidden_field :authenticity_token, value: form_authenticity_token %>
-              
-              <div class="mt-10">
-                <div id="card-element" class="mt-2 p-3 border rounded-md">
-                  <!-- A Stripe Element will be inserted here. -->
+
+              <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+                <div class="sm:col-span-3">
+                  <%= f.label :full_name, "Full Name", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :full_name, required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "Enter your full name" %>
+                  </div>
                 </div>
-                <!-- Used to display form errors. -->
-                <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600"></div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :email, "Email", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.email_field :email, required: true, value: current_user.email, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "your@email.com" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :phone, "Phone Number", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.telephone_field :phone, required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "Enter your phone number" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :ic_number, "IC Number", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :ic_number, required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "Enter your IC number" %>
+                  </div>
+                </div>
+
+                <div class="col-span-full">
+                  <%= f.label :address, "Address", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_area :address, required: true, rows: 3, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6", placeholder: "Enter your complete address" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2 sm:col-start-1">
+                  <%= f.label :city, "City", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :city, required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <%= f.label :state, "State", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.select :state, 
+                        [
+                          ["Johor", "Johor"], 
+                          ["Kedah", "Kedah"], 
+                          ["Kelantan", "Kelantan"],
+                          ["Kuala Lumpur", "Kuala Lumpur"],
+                          ["Labuan", "Labuan"],
+                          ["Melaka", "Melaka"],
+                          ["Negeri Sembilan", "Negeri Sembilan"],
+                          ["Pahang", "Pahang"],
+                          ["Penang", "Penang"],
+                          ["Perak", "Perak"],
+                          ["Perlis", "Perlis"],
+                          ["Putrajaya", "Putrajaya"],
+                          ["Sabah", "Sabah"],
+                          ["Sarawak", "Sarawak"],
+                          ["Selangor", "Selangor"],
+                          ["Terengganu", "Terengganu"]
+                        ],
+                        { include_blank: "Select state" },
+                        { required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" }
+                    %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <%= f.label :postal_code, "ZIP / Postal code", class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :postal_code, required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
               </div>
 
-              #<%= hidden_field_tag 'payment[stripe_token]', nil, id: 'stripe_token' %>
-              <%= f.hidden_field :stripe_token, id: 'stripe_token' %>
+              <div class="mt-10 space-y-10">
+                <fieldset>
+                  <legend class="text-sm font-semibold leading-6 text-gray-900">Payment Method</legend>
+                  <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your payment details.</p>
+                  <div class="mt-6">
+                    <div id="card-element" class="mt-2 p-3 border rounded-md">
+                      <!-- A Stripe Element will be inserted here. -->
+                    </div>
+                    <!-- Used to display form errors. -->
+                    <div id="card-errors" role="alert" class="mt-2 text-sm text-red-600"></div>
+                  </div>
+                </fieldset>
+              </div>
 
+              <%= f.hidden_field :stripe_token, id: 'stripe_token' %>
 
               <div class="mt-6 flex items-center justify-end gap-x-6">
                 <%= link_to "Cancel", plate_number_path(@plate_number), class: "text-sm font-semibold leading-6 text-gray-900" %>
@@ -125,6 +208,40 @@
         var errorElement = document.getElementById('card-errors');
         errorElement.textContent = '';
 
+        // Validate required billing fields
+        var requiredFields = form.querySelectorAll('[required]');
+        var isValid = true;
+        
+        requiredFields.forEach(function(field) {
+          if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('ring-red-500');
+            
+            // Add error message if not already present
+            var errorMsg = field.parentNode.querySelector('.field-error');
+            if (!errorMsg) {
+              errorMsg = document.createElement('p');
+              errorMsg.className = 'mt-1 text-sm text-red-600 field-error';
+              errorMsg.textContent = 'This field is required';
+              field.parentNode.appendChild(errorMsg);
+            }
+          } else {
+            field.classList.remove('ring-red-500');
+            var errorMsg = field.parentNode.querySelector('.field-error');
+            if (errorMsg) {
+              errorMsg.remove();
+            }
+          }
+        });
+        
+        if (!isValid) {
+          submitted = false;
+          submitButton.disabled = false;
+          submitButton.value = 'Complete Payment';
+          errorElement.textContent = 'Please fill in all required fields';
+          return;
+        }
+
         stripe.createToken(card).then(function(result) {
           if (result.error) {
             submitted = false;
@@ -132,14 +249,7 @@
             submitButton.value = 'Complete Payment';
             errorElement.textContent = result.error.message;
           } else {
-            console.log('Token created:', result.token.id); // Debug log
             document.getElementById('stripe_token').value = result.token.id;
-            
-            // Debug log the form data
-            console.log('Form data:', new FormData(form));
-
-            console.log("Token value in input:", document.getElementById('stripe_token').value); // Debug
-
             
             // Submit the form
             form.submit();
@@ -149,7 +259,7 @@
           submitButton.disabled = false;
           submitButton.value = 'Complete Payment';
           errorElement.textContent = error.message || 'An error occurred while processing your payment.';
-          console.error('Stripe error:', error); // Debug log
+          console.error('Stripe error:', error);
         });
       });
     });

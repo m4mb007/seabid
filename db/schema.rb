@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_15_204108) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,6 +41,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
     t.bigint "plate_number_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "payment_intent_id"
+    t.string "billing_name"
+    t.string "billing_email"
+    t.string "billing_phone"
+    t.text "billing_address"
+    t.string "billing_city"
+    t.string "billing_state"
+    t.string "billing_postal_code"
+    t.string "billing_ic_number"
+    t.index ["payment_intent_id"], name: "index_payments_on_payment_intent_id"
     t.index ["plate_number_id"], name: "index_payments_on_plate_number_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end

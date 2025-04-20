@@ -9,8 +9,14 @@ Rails.application.routes.draw do
   resources :bidding_fees, only: [:new, :create]
   
   namespace :admin do
+    get 'dashboard', to: 'dashboard#index'
+    resources :users
     resources :payments, only: [:index, :show]
+    resources :plate_numbers
   end
+  
+  # Stripe webhook
+  post 'stripe/webhook', to: 'payments#webhook'
   
   get 'dashboard', to: 'home#dashboard'
   get 'my_bids', to: 'home#my_bids'

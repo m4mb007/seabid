@@ -11,12 +11,15 @@ class User < ApplicationRecord
   
   validates :email, presence: true, uniqueness: true
   validates :encrypted_password, presence: true
+  validate :prevent_admin_from_bidding, if: :admin?
 
   def can_bid?
+    return false if admin?
     bidding_fee_paid?
   end
 
   def pay_bidding_fee(token)
+    return false if admin?
     return true if bidding_fee_paid?
     return false if token.blank?
 
@@ -53,5 +56,13 @@ class User < ApplicationRecord
 
   def admin?
     admin
+  end
+
+  private
+
+  def prevent_admin_from_bidding
+    if bids.any? || payments.any?
+      errors.add(:base, 'Administrators cannot place bids or make purchases')
+    end
   end
 end

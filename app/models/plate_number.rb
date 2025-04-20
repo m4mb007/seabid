@@ -11,6 +11,10 @@ class PlateNumber < ApplicationRecord
   validates :end_time, presence: true
   validates :sale_type, presence: true, inclusion: { in: %w[auction direct] }
   
+  validate :validate_pelaut_format
+  before_validation :format_number
+  before_validation :set_default_end_time
+  
   scope :available, -> { where(status: 'available') }
   scope :ending_soon, -> { where('end_time <= ?', 24.hours.from_now).available.auction }
   scope :by_category, ->(category) { where(category: category) }
@@ -44,5 +48,28 @@ class PlateNumber < ApplicationRecord
     []
   end
 
+  private
+
+  def validate_pelaut_format
+    unless number.match?(/^PELAUT\s*\d+$/)
+      errors.add(:number, 'must start with PELAUT followed by a number')
+    end
+  end
+
+  def format_number
+    return unless number.present?
+    # Convert to uppercase and ensure proper spacing
+    self.number = number.upcase.gsub(/^(PELAUT)\s*(\d+)$/, '\1 \2')
+  end
+  
+  def set_default_end_time
+    # For direct sales, set a far future date as end time if not provided
+    if direct_purchase? && (end_time.blank? || end_time_changed?)
+      self.end_time = 1.year.from_now
+    elsif auction? && end_time.blank?
+      # For auctions, set a default end time of 7 days from now if not provided
+      self.end_time = 7.days.from_now
+    end
+  end
 end
 
