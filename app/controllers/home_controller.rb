@@ -22,11 +22,18 @@ class HomeController < ApplicationController
   end
   
   def my_bids
-    @bids = current_user.bids.includes(:plate_number).order(created_at: :desc)
+    @bids = current_user.bids
+             .includes(:plate_number)
+             .order(created_at: :desc)
+             .page(params[:page])
   end
   
   def my_payments
-    @payments = current_user.payments.includes(:plate_number).order(created_at: :desc)
+    @payments = current_user.payments
+                .includes(:plate_number)
+                .order(created_at: :desc)
+                .page(params[:page])
+                .per(20)
   end
 
   # app/controllers/home_controller.rb

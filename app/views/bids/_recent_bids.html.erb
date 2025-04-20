@@ -1,0 +1,37 @@
+<%# Recent Bids Partial %>
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+  <div class="px-4 py-5 sm:px-6">
+    <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Bids</h3>
+  </div>
+  <div class="border-t border-gray-200">
+    <ul role="list" class="divide-y divide-gray-200">
+      <% @recent_bids.each do |bid| %>
+        <li class="px-4 py-4 sm:px-6">
+          <div class="flex items-center justify-between">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">
+                Plate Number: <%= bid.plate_number.number %>
+              </p>
+              <p class="text-sm text-gray-500">
+                Bid Amount: RM <%= number_with_delimiter(bid.amount) %>
+              </p>
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <p class="text-sm text-gray-500">
+                By: <%= mask_email(bid.user.email) %>
+              </p>
+              <p class="text-xs text-gray-400">
+                <%= time_ago_in_words(bid.created_at) %> ago
+              </p>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<%# Example of using the simple mask version %>
+<div class="mt-4 text-sm text-gray-500">
+  <p>Example with simple mask: <%= simple_mask_email("john.doe@example.com") %></p>
+</div> 

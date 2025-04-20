@@ -6,6 +6,8 @@ class Payment < ApplicationRecord
   
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, inclusion: { in: %w[pending processing completed failed] }
+  validates :payment_type, presence: true
+  validates :reference_id, presence: true
   validate :user_must_be_highest_bidder, if: :auction_payment?
   
   def process_payment
@@ -60,10 +62,18 @@ class Payment < ApplicationRecord
     end
   end
   
+  def stripe_session_id
+    stripe_payment_intent_id
+  end
+  
+  def stripe_session_id=(value)
+    self.stripe_payment_intent_id = value
+  end
+  
   private
   
   def auction_payment?
-    plate_number&.auction? && !skip_validation
+    plate_number&.auction?
   end
   
   def skip_validation

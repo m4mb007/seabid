@@ -2,6 +2,7 @@ class BidsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_plate_number
   before_action :check_bidding_fee_paid
+  before_action :require_otp_verification
   
   def new
     @bid = Bid.new

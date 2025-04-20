@@ -1,58 +1,41 @@
+require 'stripe_service'
+
 class PaymentsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_plate_number
-  before_action :check_availability
-  before_action :check_highest_bidder, unless: :direct_purchase?
+  before_action :authenticate_user!, except: [:webhook]
+  before_action :set_plate_number, only: [:new, :create, :thank_you]
+  before_action :check_availability, only: [:new, :create]
+  before_action :check_highest_bidder, only: [:new, :create], unless: :direct_purchase?
+  skip_before_action :verify_authenticity_token, only: [:webhook]
   
   def new
     @payment = Payment.new
     @bid = @plate_number.highest_bid if @plate_number.auction?
-    
-    # Create payment intent for FPX
+  end
+  
+  def create
+
+    puts "DEBUG PARAMS: #{params.inspect}" 
+
     @payment = current_user.payments.build
     @payment.plate_number = @plate_number
     @payment.amount = @plate_number.current_price
     @payment.status = 'pending'
-    
-    if @payment.save && @payment.process_payment
-      @client_secret = Stripe::PaymentIntent.retrieve(@payment.payment_intent_id).client_secret
-    else
-      flash.now[:alert] = @payment.errors.full_messages.to_sentence
-      render :new, status: :unprocessable_entity
-    end
-  end
-  
-  def create
-    @payment = Payment.find_by(id: params[:payment_id])
-    
-    if @payment.nil?
-      # Create a new payment with billing info
-      @payment = current_user.payments.build(payment_params)
-      @payment.plate_number = @plate_number
-      @payment.amount = @plate_number.current_price
-      @payment.status = 'processing'
-      
-      # Save billing information to Payment record
-      @payment.billing_name = params[:full_name]
-      @payment.billing_email = params[:email]
-      @payment.billing_phone = params[:phone]
-      @payment.billing_address = params[:address]
-      @payment.billing_city = params[:city]
-      @payment.billing_state = params[:state]
-      @payment.billing_postal_code = params[:postal_code]
-      @payment.billing_ic_number = params[:ic_number]
-      
-      # Process payment with Stripe token
-      if @payment.save && @payment.confirm_payment_with_token(params[:stripe_token])
-        redirect_to dashboard_path, notice: 'Payment was successfully processed.'
-      else
-        flash.now[:alert] = @payment.errors.full_messages.to_sentence || 'Payment processing failed'
+    @payment.stripe_token = payment_params[:stripe_token]
+
+    if @payment.save
+      begin
+        if @payment.process_payment
+          redirect_to dashboard_path, notice: 'Payment was successfully processed.'
+        else
+          flash.now[:alert] = @payment.errors.full_messages.to_sentence
+          render :new, status: :unprocessable_entity
+        end
+      rescue => e
+        flash.now[:alert] = e.message
         render :new, status: :unprocessable_entity
       end
-    elsif @payment&.confirm_payment(params[:payment_intent_id])
-      redirect_to dashboard_path, notice: 'Payment was successfully processed.'
     else
-      flash.now[:alert] = @payment&.errors&.full_messages&.to_sentence || 'Payment confirmation failed'
+      flash.now[:alert] = @payment.errors.full_messages.to_sentence
       render :new, status: :unprocessable_entity
     end
   end
@@ -107,10 +90,10 @@ class PaymentsController < ApplicationController
   end
 
   def direct_purchase?
-    @plate_number.direct_purchase?
+    @plate_number&.direct_purchase?
   end
   
   def payment_params
-    params.permit(:stripe_token, :payment_intent_id)
+    params.require(:payment).permit(:stripe_token)
   end
 end

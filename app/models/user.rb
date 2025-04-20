@@ -9,9 +9,12 @@ class User < ApplicationRecord
   has_many :plate_numbers, through: :bids
   has_many :purchased_plates, through: :payments, source: :plate_number
   
+  # Account type enum
+  enum :account_type, { seafarer: 0, agent: 1, company: 2 }
+
+  # Basic validations for all users
   validates :email, presence: true, uniqueness: true
   validates :encrypted_password, presence: true
-  validate :prevent_admin_from_bidding, if: :admin?
 
   def can_bid?
     return false if admin?
@@ -56,13 +59,5 @@ class User < ApplicationRecord
 
   def admin?
     admin
-  end
-
-  private
-
-  def prevent_admin_from_bidding
-    if bids.any? || payments.any?
-      errors.add(:base, 'Administrators cannot place bids or make purchases')
-    end
   end
 end

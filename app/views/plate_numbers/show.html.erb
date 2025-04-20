@@ -55,7 +55,7 @@
                   <div class="flex items-center space-x-4 py-4">
                     <div class="min-w-0 flex-1">
                       <p class="truncate text-sm font-medium text-gray-900">
-                        <%= bid.user.email %>
+                        <%= mask_email(bid.user.email) %>
                       </p>
                       <p class="truncate text-sm text-gray-500">
                         <%= time_ago_in_words(bid.created_at) %> ago

@@ -1,0 +1,70 @@
+<%# app/views/home/my_payments.html.erb %>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">My Payments</h1>
+
+  <div class="mb-4 flex space-x-4">
+    <%= link_to "My Bids", my_bids_path, class: "px-4 py-2 font-medium #{current_page?(my_bids_path) ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}" %>
+    <%= link_to "My Payments", my_payments_path, class: "px-4 py-2 font-medium #{current_page?(my_payments_path) ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}" %>
+  </div>
+
+  <% if @payments.any? %>
+    <div class="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+      <table class="min-w-full divide-y divide-gray-300">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          <% @payments.each do |payment| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <%= payment.plate_number.number %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                RM <%= number_with_delimiter(payment.amount) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium
+                  <%= case payment.status
+                      when 'completed' then 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
+                      when 'processing' then 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
+                      when 'failed' then 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
+                      else 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
+                      end %>">
+                  <%= payment.status.titleize %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= payment.created_at.strftime("%B %d, %Y %H:%M") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <%= link_to "View Plate", plate_number_path(payment.plate_number), class: "text-blue-600 hover:text-blue-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <%= paginate @payments %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No payments yet</h3>
+      <p class="mt-1 text-sm text-gray-500">Start by browsing available plate numbers.</p>
+      <div class="mt-6">
+        <%= link_to "Browse Plate Numbers", plate_numbers_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      </div>
+    </div>
+  <% end %>
+</div> 

@@ -37,3 +37,14 @@
 !/app/assets/builds/.keep
 
 /config/credentials/production.key
+
+# Ignore environment variables
+.env
+.env.*
+!.env.example
+
+# Ignore credentials
+config/credentials.yml.enc
+
+# Ignore Stripe webhook signing secret
+config/stripe_webhook_secret.yml
