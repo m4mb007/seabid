@@ -1,10 +1,20 @@
 FactoryBot.define do
   factory :plate_number do
-    number { "MyString" }
-    status { "MyString" }
-    category { "MyString" }
-    starting_price { "9.99" }
-    current_price { "9.99" }
-    end_time { "2025-04-11 10:33:47" }
+    number { Faker::Vehicle.unique.license_plate }
+    category { ['private', 'commercial'].sample }
+    status { 'available' }
+    current_price { Faker::Number.between(from: 1000, to: 10000) }
+    
+    trait :sold do
+      status { 'sold' }
+    end
+    
+    trait :reserved do
+      status { 'reserved' }
+    end
+    
+    trait :paid do
+      status { 'paid' }
+    end
   end
 end

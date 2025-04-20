@@ -1,0 +1,87 @@
+<div class="min-h-[80vh] bg-white">
+  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+    <div class="max-w-xl">
+      <% if @payment.status == 'completed' %>
+        <h1 class="text-base font-medium text-green-600">Payment successful</h1>
+        <p class="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">Thanks for your purchase!</p>
+        <p class="mt-2 text-base text-gray-500">Your payment has been successfully processed.</p>
+      <% else %>
+        <h1 class="text-base font-medium text-yellow-600">Payment processing</h1>
+        <p class="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">Processing your payment</p>
+        <p class="mt-2 text-base text-gray-500">We're verifying your payment. This may take a moment.</p>
+      <% end %>
+    </div>
+
+    <div class="mt-10 border-t border-gray-200">
+      <h2 class="sr-only">Your order</h2>
+
+      <div class="mt-4">
+        <div class="rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:p-8">
+          <h3 class="sr-only">Order summary</h3>
+
+          <div class="flow-root">
+            <dl class="-my-4 divide-y divide-gray-200 text-sm">
+              <% if @plate_number %>
+                <div class="flex items-center justify-between py-4">
+                  <dt class="text-gray-600">Plate Number</dt>
+                  <dd class="font-medium text-gray-900"><%= @plate_number.number %></dd>
+                </div>
+                <div class="flex items-center justify-between py-4">
+                  <dt class="text-gray-600">Category</dt>
+                  <dd class="font-medium text-gray-900"><%= @plate_number.category.titleize %></dd>
+                </div>
+                <div class="flex items-center justify-between py-4">
+                  <dt class="text-gray-600">Sale Type</dt>
+                  <dd class="font-medium text-gray-900"><%= @plate_number.sale_type.titleize %></dd>
+                </div>
+              <% end %>
+              <div class="flex items-center justify-between py-4">
+                <dt class="text-gray-600">Payment Status</dt>
+                <dd>
+                  <% if @payment.status == 'completed' %>
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      Completed
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20">
+                      Processing
+                    </span>
+                  <% end %>
+                </dd>
+              </div>
+              <div class="flex items-center justify-between py-4">
+                <dt class="text-gray-600">Amount Paid</dt>
+                <dd class="font-medium text-gray-900">RM <%= number_with_precision(@payment.amount, precision: 2) %></dd>
+              </div>
+              <div class="flex items-center justify-between py-4">
+                <dt class="text-gray-600">Transaction ID</dt>
+                <dd class="font-medium text-gray-900">#<%= @payment.id %></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex gap-x-4">
+      <%= link_to dashboard_path, class: "rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+        View Dashboard
+        <span aria-hidden="true"> &rarr;</span>
+      <% end %>
+
+      <%= link_to plate_numbers_path, class: "text-sm font-semibold leading-6 text-gray-900" do %>
+        Continue Shopping
+        <span aria-hidden="true"> &rarr;</span>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @payment.status != 'completed' %>
+  <script>
+    // If payment is still processing, check status after 5 seconds
+    setTimeout(function() {
+      window.location.reload();
+    }, 5000);
+  </script>
+<% end %> 

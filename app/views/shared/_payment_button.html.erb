@@ -1,0 +1,21 @@
+<%# 
+  Usage:
+  <%= render 'shared/payment_button', 
+      amount: 100, 
+      payment_type: 'bidding_fee', 
+      reference_id: @bid.id, 
+      plate_number: @plate_number,
+      button_text: 'Pay Bidding Fee',
+      button_class: 'btn-primary' 
+  %>
+%>
+
+<%= link_to new_plate_number_payment_path(
+    plate_number_id: plate_number.id,
+    amount: amount,
+    payment_type: payment_type,
+    reference_id: reference_id
+  ),
+  class: button_class || "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+  <%= button_text || "Pay RM #{number_with_delimiter(amount)}" %>
+<% end %> 

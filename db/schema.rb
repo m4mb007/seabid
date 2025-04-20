@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_20_021400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,6 +41,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
     t.bigint "plate_number_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "payment_intent_id"
+    t.string "billing_name"
+    t.string "billing_email"
+    t.string "billing_phone"
+    t.text "billing_address"
+    t.string "billing_city"
+    t.string "billing_state"
+    t.string "billing_postal_code"
+    t.string "billing_ic_number"
+    t.index ["payment_intent_id"], name: "index_payments_on_payment_intent_id"
     t.index ["plate_number_id"], name: "index_payments_on_plate_number_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
@@ -57,6 +67,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
     t.string "sale_type", default: "auction"
   end
 
+  create_table "settings", force: :cascade do |t|
+    t.string "key"
+    t.string "value"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -67,6 +85,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_14_071129) do
     t.datetime "updated_at", null: false
     t.boolean "bidding_fee_paid", default: false
     t.boolean "admin", default: false, null: false
+    t.string "ic_number"
+    t.text "address"
+    t.string "phone_number"
+    t.string "seafarer_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "street"
+    t.string "postcode"
+    t.string "state"
+    t.string "country"
+    t.string "account_type"
+    t.string "company_registration_number"
+    t.boolean "otp_verified", default: false
+    t.datetime "otp_sent_at"
+    t.boolean "email_verified", default: false
+    t.string "otp_code"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

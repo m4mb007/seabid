@@ -1,16 +1,40 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: 'users/registrations' }
+  
+  resource :profile, only: [:edit, :update], controller: 'profiles'
+  resource :password, only: [:edit, :update], controller: 'passwords'
   
   resources :plate_numbers do
     resources :bids, only: [:new, :create]
     resources :payments, only: [:new, :create]
   end
 
+  resources :payments, only: [:index, :show] do
+    collection do
+      post :webhook
+    end
+    member do
+      get :thank_you
+    end
+  end
+
   resources :bidding_fees, only: [:new, :create]
   
   namespace :admin do
+    root to: 'dashboard#index'
+    resources :users
+    resources :settings, only: [:index, :update]
     resources :payments, only: [:index, :show]
+    resources :plate_numbers
   end
+  
+  # Stripe webhook
+  post 'stripe/webhook', to: 'payments#webhook'
+  
+  # Test routes for Stripe integration
+  get 'test/stripe', to: 'test#stripe_test'
+  get 'test/success', to: 'test#success'
+  get 'test/cancel', to: 'test#cancel'
   
   get 'dashboard', to: 'home#dashboard'
   get 'my_bids', to: 'home#my_bids'
@@ -30,4 +54,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # OTP verification routes
+  resource :otp_verification, only: [:new, :create] do
+    post :resend, on: :collection
+  end
 end

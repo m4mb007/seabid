@@ -1,0 +1,169 @@
+<div class="bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mx-auto max-w-2xl">
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Create your account</h1>
+      <p class="mt-2 text-sm text-gray-600">Already have an account? <%= link_to "Sign in", new_user_session_path, class: "font-medium text-blue-600 hover:text-blue-500" %></p>
+
+      <div class="mt-8">
+        <div class="space-y-12">
+          <div class="border-b border-gray-900/10 pb-12">
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "mt-10" }) do |f| %>
+              <%= render "devise/shared/error_messages", resource: resource %>
+
+              <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <!-- Account Type Selection -->
+                <div class="col-span-full">
+                  <label class="block text-sm font-medium leading-6 text-gray-900">Account Type</label>
+                  <div class="mt-2 flex gap-x-4">
+                    <div class="flex items-center">
+                      <input id="account_type_seafarer" name="user[account_type]" type="radio" value="seafarer" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600" checked>
+                      <label for="account_type_seafarer" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Seafarer</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input id="account_type_agent" name="user[account_type]" type="radio" value="agent" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600">
+                      <label for="account_type_agent" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Agent</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :first_name, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :first_name, required: true, placeholder: "Enter your first name", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :last_name, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :last_name, required: true, placeholder: "Enter your last name", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :email, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.email_field :email, autocomplete: "email", required: true, placeholder: "Enter your email address", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :phone_number, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.telephone_field :phone_number, required: true, placeholder: "Enter your phone number", pattern: "[0-9]{10,}", title: "Please enter a valid phone number with at least 10 digits", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                    <p class="mt-1 text-xs text-gray-500">A verification code will be sent to this number</p>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :ic_number, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :ic_number, required: true, placeholder: "Enter your IC number", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                    <p class="mt-1 text-xs text-gray-500">This cannot be changed after registration</p>
+                  </div>
+                </div>
+
+                <!-- Seafarer ID field (shown only for Seafarer account type) -->
+                <div class="sm:col-span-3 seafarer-field">
+                  <%= f.label :seafarer_id, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :seafarer_id, required: true, placeholder: "Enter your seafarer ID", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <!-- Company Registration Number field (shown only for Agent account type) -->
+                <div class="sm:col-span-3 agent-field" style="display: none;">
+                  <%= f.label :company_registration_number, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :company_registration_number, placeholder: "Enter company registration number", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="col-span-full">
+                  <%= f.label :street, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :street, required: true, placeholder: "Enter your street address", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <%= f.label :postcode, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :postcode, required: true, placeholder: "Enter postcode", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <%= f.label :state, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :state, required: true, placeholder: "Enter state", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-2">
+                  <%= f.label :country, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.text_field :country, required: true, placeholder: "Enter country", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :password, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.password_field :password, autocomplete: "new-password", required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                    <% if @minimum_password_length %>
+                      <p class="mt-1 text-sm text-gray-500">Minimum <%= @minimum_password_length %> characters</p>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <%= f.label :password_confirmation, class: "block text-sm font-medium leading-6 text-gray-900" %>
+                  <div class="mt-2">
+                    <%= f.password_field :password_confirmation, autocomplete: "new-password", required: true, class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6" %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center justify-end gap-x-6">
+                <%= link_to "Cancel", root_path, class: "text-sm font-semibold leading-6 text-gray-900" %>
+                <%= f.submit "Sign up", class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const seafarerRadio = document.getElementById('account_type_seafarer');
+    const agentRadio = document.getElementById('account_type_agent');
+    const seafarerFields = document.querySelectorAll('.seafarer-field');
+    const agentFields = document.querySelectorAll('.agent-field');
+    const seafarerIdField = document.querySelector('input[name="user[seafarer_id]"]');
+    const companyRegField = document.querySelector('input[name="user[company_registration_number]"]');
+
+    function toggleFields() {
+      if (seafarerRadio.checked) {
+        seafarerFields.forEach(field => field.style.display = 'block');
+        agentFields.forEach(field => field.style.display = 'none');
+        seafarerIdField.required = true;
+        companyRegField.required = false;
+      } else {
+        seafarerFields.forEach(field => field.style.display = 'none');
+        agentFields.forEach(field => field.style.display = 'block');
+        seafarerIdField.required = false;
+        companyRegField.required = true;
+      }
+    }
+
+    seafarerRadio.addEventListener('change', toggleFields);
+    agentRadio.addEventListener('change', toggleFields);
+    
+    // Initialize on page load
+    toggleFields();
+  });
+</script> 

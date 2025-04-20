@@ -1,87 +1,338 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# # This file should ensure the existence of records required to run the application in every environment.
+# # The data can then be loaded with the bin/rails db:seed command or db:setup.
 
-# Create admin user
-admin = User.create!(
-  email: 'admin@example.com',
-  password: 'password123',
-  password_confirmation: 'password123',
-  admin: true
-)
+# # Clear existing data to avoid duplicates
+# puts "Cleaning database..."
+# Bid.delete_all
+# Payment.delete_all
+# PlateNumber.delete_all
+# User.delete_all
 
-puts "Admin user: admin@example.com / password123 (bidding fee paid)"
+# # Create admin users
+# puts "Creating admin users..."
+# admin1 = User.create!(
+#   email: 'admin@example.com',
+#   password: 'password123',
+#   password_confirmation: 'password123',
+#   admin: true,
+#   first_name: 'Admin',
+#   last_name: 'User',
+#   phone_number: '+60123456789',
+#   ic_number: "A#{Time.current.to_i}1",
+#   account_type: 'company',
+#   company_registration_number: 'CR000001',
+#   street: '123 Admin Street',
+#   postcode: '50000',
+#   state: 'Selangor',
+#   country: 'Malaysia'
+# )
 
-# Create regular user
-user = User.create!(
-  email: 'user@example.com',
-  password: 'password123',
-  password_confirmation: 'password123',
-  admin: false
-)
+# admin2 = User.create!(
+#   email: 'superadmin@seabid.com',
+#   password: 'password123',
+#   password_confirmation: 'password123',
+#   admin: true,
+#   first_name: 'Super',
+#   last_name: 'Admin',
+#   phone_number: '+60123456788',
+#   ic_number: "B#{Time.current.to_i}2",
+#   account_type: 'company',
+#   company_registration_number: 'CR000002',
+#   street: '456 Admin Avenue',
+#   postcode: '50100',
+#   state: 'Kuala Lumpur',
+#   country: 'Malaysia'
+# )
 
-puts "Regular user: user@example.com / password123"
+# puts "Created admin users:"
+# puts "  - #{admin1.email} / password123"
+# puts "  - #{admin2.email} / password123"
 
-# Create sample plate numbers for auction
-auction_plates = [
-  { number: 'VIP 1', category: 'prime', starting_price: 50000, current_price: 50000, sale_type: 'auction' },
-  { number: 'WXC 888', category: 'popular', starting_price: 3000, current_price: 3000, sale_type: 'auction' },
-  { number: 'ABC 123', category: 'main', starting_price: 1000, current_price: 1000, sale_type: 'auction' },
-  { number: 'MYR 8888', category: 'prime', starting_price: 30000, current_price: 30000, sale_type: 'auction' },
-  { number: 'KL 9999', category: 'popular', starting_price: 5000, current_price: 5000, sale_type: 'auction' }
-]
+# # Create regular users with different account types
+# puts "Creating regular users..."
+# regular_users = [
+#   { 
+#     email: 'seafarer1@example.com', 
+#     bidding_fee_paid: true,
+#     first_name: 'John',
+#     last_name: 'Doe',
+#     phone_number: '+60123456787',
+#     ic_number: 'A12345678',
+#     seafarer_id: 'SEA123456',
+#     account_type: 'seafarer',
+#     street: '123 Seafarer Street',
+#     postcode: '50000',
+#     state: 'Selangor',
+#     country: 'Malaysia'
+#   },
+#   { 
+#     email: 'agent1@example.com', 
+#     bidding_fee_paid: true,
+#     first_name: 'Jane',
+#     last_name: 'Smith',
+#     phone_number: '+60123456786',
+#     ic_number: 'B87654321',
+#     company_registration_number: 'CR123456',
+#     account_type: 'agent',
+#     street: '456 Agent Avenue',
+#     postcode: '50100',
+#     state: 'Kuala Lumpur',
+#     country: 'Malaysia'
+#   },
+#   { 
+#     email: 'company1@example.com', 
+#     bidding_fee_paid: true,
+#     first_name: 'Robert',
+#     last_name: 'Johnson',
+#     phone_number: '+60123456785',
+#     ic_number: 'C12345678',
+#     company_registration_number: 'CR789012',
+#     account_type: 'company',
+#     street: '789 Company Road',
+#     postcode: '50200',
+#     state: 'Penang',
+#     country: 'Malaysia'
+#   },
+#   { 
+#     email: 'seafarer2@example.com', 
+#     bidding_fee_paid: false,
+#     first_name: 'Sarah',
+#     last_name: 'Wilson',
+#     phone_number: '+60123456784',
+#     ic_number: 'D87654321',
+#     seafarer_id: 'SEA789012',
+#     account_type: 'seafarer',
+#     street: '321 Seafarer Lane',
+#     postcode: '50300',
+#     state: 'Johor',
+#     country: 'Malaysia'
+#   },
+#   { 
+#     email: 'agent2@example.com', 
+#     bidding_fee_paid: false,
+#     first_name: 'Michael',
+#     last_name: 'Brown',
+#     phone_number: '+60123456783',
+#     ic_number: 'E12345678',
+#     company_registration_number: 'CR345678',
+#     account_type: 'agent',
+#     street: '654 Agent Boulevard',
+#     postcode: '50400',
+#     state: 'Melaka',
+#     country: 'Malaysia'
+#   }
+# ]
 
-# Create sample plate numbers for direct purchase
-direct_plates = [
-  { number: 'VIP 2', category: 'prime', starting_price: 45000, current_price: 45000, sale_type: 'direct' },
-  { number: 'WXC 999', category: 'popular', starting_price: 2500, current_price: 2500, sale_type: 'direct' },
-  { number: 'DEF 456', category: 'main', starting_price: 800, current_price: 800, sale_type: 'direct' },
-  { number: 'MYR 7777', category: 'prime', starting_price: 25000, current_price: 25000, sale_type: 'direct' },
-  { number: 'KL 8888', category: 'popular', starting_price: 4000, current_price: 4000, sale_type: 'direct' }
-]
+# created_users = regular_users.map do |user_data|
+#   User.create!(
+#     email: user_data[:email],
+#     password: 'password123',
+#     password_confirmation: 'password123',
+#     admin: false,
+#     bidding_fee_paid: user_data[:bidding_fee_paid],
+#     first_name: user_data[:first_name],
+#     last_name: user_data[:last_name],
+#     phone_number: user_data[:phone_number],
+#     ic_number: user_data[:ic_number],
+#     seafarer_id: user_data[:seafarer_id],
+#     company_registration_number: user_data[:company_registration_number],
+#     account_type: user_data[:account_type],
+#     street: user_data[:street],
+#     postcode: user_data[:postcode],
+#     state: user_data[:state],
+#     country: user_data[:country]
+#   )
+# end
 
-# Create auction plates
-auction_plates.each do |plate_data|
-  plate = PlateNumber.create!(
-    number: plate_data[:number],
-    category: plate_data[:category],
-    starting_price: plate_data[:starting_price],
-    current_price: plate_data[:current_price],
-    sale_type: plate_data[:sale_type],
-    status: 'available',
-    end_time: 7.days.from_now
-  )
+# puts "Created regular users:"
+# created_users.each do |user|
+#   fee_status = user.bidding_fee_paid? ? "bidding fee paid" : "no bidding fee paid"
+#   puts "  - #{user.email} / password123 (#{fee_status}) - #{user.account_type}"
+# end
+
+# # Create plate numbers for auction
+# puts "Creating auction plate numbers..."
+# auction_plates = [
+#   { number: 'PELAUT 1', category: 'prime', starting_price: 50000, current_price: 50000, sale_type: 'auction', end_time: 7.days.from_now },
+#   { number: 'PELAUT 888', category: 'popular', starting_price: 3000, current_price: 3000, sale_type: 'auction', end_time: 5.days.from_now },
+#   { number: 'PELAUT 123', category: 'main', starting_price: 1000, current_price: 1000, sale_type: 'auction', end_time: 3.days.from_now },
+#   { number: 'PELAUT 8888', category: 'prime', starting_price: 30000, current_price: 30000, sale_type: 'auction', end_time: 6.days.from_now },
+#   { number: 'PELAUT 9999', category: 'popular', starting_price: 5000, current_price: 5000, sale_type: 'auction', end_time: 4.days.from_now },
+#   { number: 'PELAUT 7777', category: 'popular', starting_price: 4500, current_price: 4500, sale_type: 'auction', end_time: 8.days.from_now },
+#   { number: 'PELAUT 555', category: 'main', starting_price: 2500, current_price: 2500, sale_type: 'auction', end_time: 7.days.from_now },
+#   { number: 'PELAUT 333', category: 'main', starting_price: 1800, current_price: 1800, sale_type: 'auction', end_time: 6.days.from_now }
+# ]
+
+# auction_plate_objects = auction_plates.map do |plate_data|
+#   PlateNumber.create!(
+#     number: plate_data[:number],
+#     category: plate_data[:category],
+#     starting_price: plate_data[:starting_price],
+#     current_price: plate_data[:current_price],
+#     sale_type: plate_data[:sale_type],
+#     status: 'available',
+#     end_time: plate_data[:end_time]
+#   )
+# end
+
+# # Create plate numbers for direct purchase
+# puts "Creating direct sale plate numbers..."
+# direct_plates = [
+#   { number: 'PELAUT 2', category: 'prime', starting_price: 45000, current_price: 45000, sale_type: 'direct' },
+#   { number: 'PELAUT 999', category: 'popular', starting_price: 2500, current_price: 2500, sale_type: 'direct' },
+#   { number: 'PELAUT 456', category: 'main', starting_price: 800, current_price: 800, sale_type: 'direct' },
+#   { number: 'PELAUT 7778', category: 'prime', starting_price: 25000, current_price: 25000, sale_type: 'direct' },
+#   { number: 'PELAUT 8889', category: 'popular', starting_price: 4000, current_price: 4000, sale_type: 'direct' },
+#   { number: 'PELAUT 5678', category: 'main', starting_price: 1200, current_price: 1200, sale_type: 'direct' },
+#   { number: 'PELAUT 1234', category: 'main', starting_price: 900, current_price: 900, sale_type: 'direct' },
+#   { number: 'PELAUT 777', category: 'popular', starting_price: 3500, current_price: 3500, sale_type: 'direct' }
+# ]
+
+# direct_plate_objects = direct_plates.map do |plate_data|
+#   PlateNumber.create!(
+#     number: plate_data[:number],
+#     category: plate_data[:category],
+#     starting_price: plate_data[:starting_price],
+#     current_price: plate_data[:current_price],
+#     sale_type: plate_data[:sale_type],
+#     status: 'available',
+#     end_time: 1.year.from_now # Long end time for direct purchase plates
+#   )
+# end
+
+# # Create some bids on auction plates
+# puts "Creating bids for auction plates..."
+# eligible_users = created_users.select(&:bidding_fee_paid?)
+
+# auction_plate_objects.each_with_index do |plate, index|
+#   # Create 1-3 bids for each plate to simulate activity
+#   num_bids = rand(1..3)
+#   current_price = plate.starting_price
   
-  # Create some sample bids for auction plates
-  if plate.id % 2 == 0 # Add bids to every other plate
-    Bid.create!(
-      user: admin,
-      plate_number: plate,
-      amount: plate.starting_price + 500
-    )
-    plate.update(current_price: plate.starting_price + 500)
-  end
-end
+#   num_bids.times do
+#     # Pick a random eligible user
+#     user = eligible_users.sample
+    
+#     # Increase the bid by a random amount (5-15% of current price)
+#     increase = (current_price * (0.05 + rand * 0.1)).round(2)
+#     bid_amount = current_price + increase
+    
+#     # Create the bid
+#     bid = Bid.new(
+#       user: user,
+#       plate_number: plate,
+#       amount: bid_amount
+#     )
+    
+#     # Skip validation to allow creating multiple bids in sequence
+#     bid.skip_validation = true
+#     bid.save!
+    
+#     # Update current price manually
+#     current_price = bid_amount
+#   end
+  
+#   # Update the final price of the plate
+#   plate.update!(current_price: current_price)
+# end
 
-# Create direct purchase plates
-direct_plates.each do |plate_data|
-  PlateNumber.create!(
-    number: plate_data[:number],
-    category: plate_data[:category],
-    starting_price: plate_data[:starting_price],
-    current_price: plate_data[:current_price],
-    sale_type: plate_data[:sale_type],
-    status: 'available',
-    end_time: 1.year.from_now # Long end time for direct purchase plates
-  )
-end
+# # Create some completed purchases (both auction and direct)
+# puts "Creating completed purchases..."
 
-puts "Seed data created successfully!"
-puts "Created #{PlateNumber.count} plate numbers (#{PlateNumber.auction.count} auction, #{PlateNumber.direct.count} direct purchase)"
-puts "Created #{Bid.count} sample bids"
+# # Completed auction purchase
+# completed_auction = auction_plate_objects.sample
+# highest_bid = Bid.where(plate_number: completed_auction).order(amount: :desc).first
+# if highest_bid
+#   payment = Payment.new(
+#     user: highest_bid.user,
+#     plate_number: completed_auction,
+#     amount: highest_bid.amount,
+#     status: 'completed',
+#     billing_name: "#{highest_bid.user.first_name} #{highest_bid.user.last_name}",
+#     billing_email: highest_bid.user.email,
+#     billing_phone: highest_bid.user.phone_number,
+#     billing_address: highest_bid.user.street,
+#     billing_city: highest_bid.user.state,
+#     billing_state: highest_bid.user.state,
+#     billing_postal_code: highest_bid.user.postcode,
+#     billing_ic_number: highest_bid.user.ic_number
+#   )
+#   payment.save(validate: false)
+#   completed_auction.update!(status: 'paid')
+# end
+
+# # Completed direct purchase
+# completed_direct = direct_plate_objects.sample
+# direct_buyer = eligible_users.sample
+# payment = Payment.new(
+#   user: direct_buyer,
+#   plate_number: completed_direct,
+#   amount: completed_direct.current_price,
+#   status: 'completed',
+#   billing_name: "#{direct_buyer.first_name} #{direct_buyer.last_name}",
+#   billing_email: direct_buyer.email,
+#   billing_phone: direct_buyer.phone_number,
+#   billing_address: direct_buyer.street,
+#   billing_city: direct_buyer.state,
+#   billing_state: direct_buyer.state,
+#   billing_postal_code: direct_buyer.postcode,
+#   billing_ic_number: direct_buyer.ic_number
+# )
+# payment.save(validate: false)
+# completed_direct.update!(status: 'paid')
+
+# # Create some processing payments
+# puts "Creating pending/processing payments..."
+
+# # Processing auction payment
+# processing_auction = auction_plate_objects.sample
+# highest_bid = Bid.where(plate_number: processing_auction).order(amount: :desc).first
+# if highest_bid && processing_auction.id != completed_auction.id
+#   payment = Payment.new(
+#     user: highest_bid.user,
+#     plate_number: processing_auction,
+#     amount: highest_bid.amount,
+#     status: 'processing',
+#     billing_name: "#{highest_bid.user.first_name} #{highest_bid.user.last_name}",
+#     billing_email: highest_bid.user.email,
+#     billing_phone: highest_bid.user.phone_number,
+#     billing_address: highest_bid.user.street,
+#     billing_city: highest_bid.user.state,
+#     billing_state: highest_bid.user.state,
+#     billing_postal_code: highest_bid.user.postcode,
+#     billing_ic_number: highest_bid.user.ic_number
+#   )
+#   payment.save(validate: false)
+#   processing_auction.update!(status: 'booked')
+# end
+
+# # Processing direct purchase
+# processing_direct = direct_plate_objects.sample
+# direct_buyer = eligible_users.sample
+# if processing_direct.id != completed_direct.id
+#   payment = Payment.new(
+#     user: direct_buyer,
+#     plate_number: processing_direct,
+#     amount: processing_direct.current_price,
+#     status: 'processing',
+#     billing_name: "#{direct_buyer.first_name} #{direct_buyer.last_name}",
+#     billing_email: direct_buyer.email,
+#     billing_phone: direct_buyer.phone_number,
+#     billing_address: direct_buyer.street,
+#     billing_city: direct_buyer.state,
+#     billing_state: direct_buyer.state,
+#     billing_postal_code: direct_buyer.postcode,
+#     billing_ic_number: direct_buyer.ic_number
+#   )
+#   payment.save(validate: false)
+#   processing_direct.update!(status: 'booked')
+# end
+
+# # Summary statistics
+# puts "Seed data created successfully!"
+# puts "Created #{User.count} users (#{User.where(admin: true).count} admins, #{User.where(admin: false).count} regular users)"
+# puts "Created #{PlateNumber.count} plate numbers (#{PlateNumber.auction.count} auction, #{PlateNumber.direct.count} direct purchase)"
+# puts "Created #{Bid.count} bids on auction plates"
+# puts "Created #{Payment.where(status: 'completed').count} completed payments"
+# puts "Created #{Payment.where(status: 'processing').count} processing payments"
+# puts "Total value of completed transactions: RM #{Payment.where(status: 'completed').sum(:amount)}"
