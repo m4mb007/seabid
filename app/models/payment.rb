@@ -6,7 +6,7 @@ class Payment < ApplicationRecord
   
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, inclusion: { in: %w[pending processing completed failed] }
-  validates :payment_type, presence: true
+  validates :payment_type, presence: true, inclusion: { in: %w[bidding_fee plate_number] }
   validates :reference_id, presence: true
   validate :user_must_be_highest_bidder, if: :auction_payment?
   
@@ -73,7 +73,7 @@ class Payment < ApplicationRecord
   private
   
   def auction_payment?
-    plate_number&.auction?
+    payment_type == 'plate_number' && plate_number&.auction?
   end
   
   def skip_validation

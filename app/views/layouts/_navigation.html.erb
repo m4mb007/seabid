@@ -1,73 +1,75 @@
 <header class="bg-white shadow-sm">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center justify-between">
-  <!-- Logo & Navigation in 1 flex group -->
-  <div class="flex items-center space-x-8">
-    <!-- Logo -->
-    <%= link_to root_path, class: "flex items-center" do %>
-      <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">SeaBid</span>
-    <% end %>
-
-    <!-- Main Navigation -->
-    <nav class="hidden md:flex space-x-6">
-      
-      <% if user_signed_in? %>
-        <% if current_user.admin? %>
-          <%= link_to "Admin Dashboard", admin_root_path, class: "#{nav_class(admin_root_path)}" %>
-        <% else %>
-          <%= link_to "Home", root_path, class: "#{nav_class(root_path)}" %>
-          <%= link_to "Plates", plate_numbers_path, class: "#{nav_class(plate_numbers_path)}" %>
-          <%= link_to "Dashboard", dashboard_path, class: "rounded-md px-3 py-2 text-sm font-medium #{current_page?(dashboard_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+    <div class="flex h-16 items-center justify-between">
+      <!-- Logo & Navigation in 1 flex group -->
+      <div class="flex items-center space-x-8">
+        <!-- Logo -->
+        <%= link_to root_path, class: "flex items-center" do %>
+          <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">SeaBid</span>
         <% end %>
-      <% end %>
-    </nav>
-  </div>
 
-  <!-- User Menu -->
-  <div class="flex items-center gap-4">
-    <% if user_signed_in? %>
-      <!-- Verification Status Badge -->
-      <%= render "shared/verification_status", user: current_user %>
-      
-      <div class="relative" x-data="{ open: false }" @click.away="open = false">
-        <button @click="open = !open" class="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
-          <span>Selamat pagi, <%= current_user.first_name %></span>
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        
-        <div x-show="open" 
-             x-transition:enter="transition ease-out duration-100"
-             x-transition:enter-start="transform opacity-0 scale-95"
-             x-transition:enter-end="transform opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-75"
-             x-transition:leave-start="transform opacity-100 scale-100"
-             x-transition:leave-end="transform opacity-0 scale-95"
-             class="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-             style="display: none;">
-          <%= link_to "Edit Profile", edit_profile_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-          <% unless current_user.otp_verified? %>
-            <%= link_to "Verify Account", new_otp_verification_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+        <!-- Main Navigation -->
+        <nav class="hidden md:flex space-x-6">
+          <% if user_signed_in? %>
+            <% if current_user.admin? %>
+              <%= link_to "Admin Dashboard", admin_root_path, class: "rounded-md px-3 py-2 text-sm font-medium #{current_page?(admin_root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+            <% else %>
+              <%= link_to "Home", root_path, class: "rounded-md px-3 py-2 text-sm font-medium #{current_page?(root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+              <%= link_to "Plates", plate_numbers_path, class: "rounded-md px-3 py-2 text-sm font-medium #{current_page?(plate_numbers_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+              <%= link_to "Dashboard", dashboard_path, class: "rounded-md px-3 py-2 text-sm font-medium #{current_page?(dashboard_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+            <% end %>
           <% end %>
-          <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
-        </div>
+        </nav>
       </div>
-    <% else %>
-      <%= link_to "Sign In", new_user_session_path, class: "text-sm px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500" %>
-      <%= link_to "Sign Up", new_user_registration_path, class: "text-sm px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100" %>
-    <% end %>
+
+      <!-- User Menu -->
+      <div class="flex items-center gap-4">
+        <% if user_signed_in? %>
+          <!-- Verification Status Badge -->
+          <%= render "shared/verification_status", user: current_user %>
+          
+          <div class="relative" x-data="{ open: false }" @click.away="open = false">
+            <button @click="open = !open" class="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50">
+              <span>Selamat pagi, <%= current_user.first_name %></span>
+              <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            
+            <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="transform opacity-0 scale-95"
+                 x-transition:enter-end="transform opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="transform opacity-100 scale-100"
+                 x-transition:leave-end="transform opacity-0 scale-95"
+                 class="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                 style="display: none;">
+              <%= link_to "Edit Profile", edit_profile_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+              <% unless current_user.otp_verified? %>
+                <%= link_to "Verify Account", new_otp_verification_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+              <% end %>
+              <%= button_to destroy_user_session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" do %>
+                Logout
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <%= link_to "Sign In", new_user_session_path, class: "text-sm px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500", data: { turbo: false } %>
+          <%= link_to "Sign Up", new_user_registration_path, class: "text-sm px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100", data: { turbo: false } %>
+        <% end %>
+      </div>
+    </div>
   </div>
-</div>
-</div>
 
   <!-- Mobile Navigation Menu -->
   <div class="block md:hidden border-t border-gray-200">
     <nav class="flex overflow-x-auto py-3 px-4">
       <%= link_to "Home", root_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
-      <%= link_to "Plates", plate_numbers_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{controller_name == 'plate_numbers' && action_name == 'index' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
       
       <% if user_signed_in? %>
+        <%= link_to "Plates", plate_numbers_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(plate_numbers_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+        
         <% if current_user.admin? %>
           <%= link_to "Admin Dashboard", admin_root_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(admin_root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
           <%= link_to "Users", admin_users_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(admin_users_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>

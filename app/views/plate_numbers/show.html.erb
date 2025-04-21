@@ -85,7 +85,12 @@
           <% if user_signed_in? %>
             <% if @plate_number.status == 'available' %>
               <% if @plate_number.direct_purchase? %>
-                <%= link_to new_plate_number_payment_path(@plate_number), class: "flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" do %>
+                <%= link_to new_plate_number_payment_path(
+                    @plate_number,
+                    amount: @plate_number.current_price,
+                    payment_type: 'plate_number',
+                    reference_id: @plate_number.id
+                  ), class: "flex w-full items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" do %>
                   Purchase Now - RM <%= number_with_delimiter(@plate_number.current_price) %>
                 <% end %>
               <% else %>
@@ -111,8 +116,14 @@
 
                   <% if @highest_bid&.user == current_user %>
                     <div class="mt-6">
-                      <%= link_to "Proceed to Payment", new_plate_number_payment_path(@plate_number), class: "flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" %>
-                    </div>
+                      <%= link_to new_plate_number_payment_path(
+                          @plate_number,
+                          amount: @plate_number.current_price,
+                          payment_type: 'plate_number',
+                          reference_id: @plate_number.id
+                        ), class: "flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-8 py-3 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" %>
+                        Proceed to Payment
+                      </div>
                   <% end %>
                 <% else %>
                   <div class="rounded-md bg-yellow-50 p-4">

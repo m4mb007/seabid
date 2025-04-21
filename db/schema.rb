@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_20_021400) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_22_091410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_021400) do
     t.string "billing_state"
     t.string "billing_postal_code"
     t.string "billing_ic_number"
+    t.string "payment_type"
+    t.string "reference_id"
     t.index ["payment_intent_id"], name: "index_payments_on_payment_intent_id"
     t.index ["plate_number_id"], name: "index_payments_on_plate_number_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
@@ -97,9 +99,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_20_021400) do
     t.string "country"
     t.string "account_type"
     t.string "company_registration_number"
-    t.boolean "otp_verified", default: false
+    t.boolean "otp_verified", default: false, null: false
     t.datetime "otp_sent_at"
-    t.boolean "email_verified", default: false
+    t.boolean "email_verified", default: false, null: false
     t.string "otp_code"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

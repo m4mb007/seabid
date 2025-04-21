@@ -1,14 +1,14 @@
-require 'stripe_service'
+# require 'stripe_service'
 
 class PaymentsController < ApplicationController
   before_action :authenticate_user!, except: [:webhook]
-  before_action :set_plate_number, only: [:new, :create, :thank_you]
+  before_action :set_plate_number, only: [:new, :create]
   before_action :check_availability, only: [:new, :create]
   before_action :check_highest_bidder, only: [:new, :create], unless: :direct_purchase?
   skip_before_action :verify_authenticity_token, only: [:webhook]
   
   def new
-    @amount = params[:amount].to_i
+    @amount = params[:amount].to_f
     @payment_type = params[:payment_type]
     @reference_id = params[:reference_id]
     
@@ -22,60 +22,29 @@ class PaymentsController < ApplicationController
       plate_number: @plate_number
     )
     
-    # Create a checkout session
-    success_url = thank_you_payment_url(@payment)
-    cancel_url = plate_number_url(@plate_number)
+    # For now, automatically mark the payment as completed
+    @payment.update!(status: 'completed')
     
-    result = StripeService.create_checkout_session(
-      @amount * 100, # Convert to cents
-      'myr',
-      {
-        payment_id: @payment.id,
-        user_id: current_user.id,
-        payment_type: @payment_type,
-        reference_id: @reference_id
-      },
-      success_url,
-      cancel_url
-    )
-    
-    if result[:success]
-      # Store the session ID in the payment record
-      @payment.update!(stripe_payment_intent_id: result[:session].id)
-      
-      # Redirect to Stripe Checkout
-      redirect_to result[:session].url, allow_other_host: true
-    else
-      @payment.update!(status: 'failed')
-      flash[:error] = result[:error]
-      redirect_to plate_number_path(@plate_number), alert: result[:error]
+    # Handle different payment types
+    case @payment_type
+    when 'bidding_fee'
+      current_user.update(bidding_fee_paid: true)
+    when 'plate_number'
+      @plate_number.update(status: 'paid')
     end
+    
+    # Redirect to thank you page
+    redirect_to thank_you_payment_path(@payment)
   end
 
   def thank_you
     @payment = Payment.find(params[:id])
+    @plate_number = @payment.plate_number
     
     # Verify the payment belongs to the current user
     unless @payment.user == current_user
       redirect_to root_path, alert: 'You are not authorized to view this payment.'
       return
-    end
-    
-    # If the payment is still pending, check with Stripe
-    if @payment.status == 'pending'
-      result = StripeService.retrieve_checkout_session(@payment.stripe_payment_intent_id)
-      
-      if result[:success] && result[:session].payment_status == 'paid'
-        @payment.update!(status: 'completed')
-        
-        # Handle different payment types
-        case @payment.payment_type
-        when 'bidding_fee'
-          current_user.update(bidding_fee_paid: true)
-        when 'plate_number'
-          @plate_number.update(status: 'paid')
-        end
-      end
     end
   end
   

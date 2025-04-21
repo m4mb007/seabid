@@ -100,8 +100,8 @@
                       <p class="text-sm font-medium">Current Bid</p>
                       <p class="text-lg font-bold">RM <%= number_with_delimiter(plate.current_price) %></p>
                     </div>
-                    <%= link_to plate_number_path(id: plate.id), class: "inline-flex items-center px-3 py-1.5 border border-white rounded-md text-sm font-medium text-white hover:bg-white hover:text-blue-600 transition-colors duration-300" do %>
-                      <span>View Details</span>
+                    <%= link_to plate_number_path(plate), class: "inline-flex items-center px-3 py-1.5 border border-white rounded-md text-sm font-medium text-white hover:bg-white hover:text-blue-600 transition-colors duration-300" do %>
+                      View Details
                       <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>

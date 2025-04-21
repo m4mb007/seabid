@@ -53,7 +53,6 @@ gem "active_model_serializers"
 gem 'kaminari-tailwind'
 
 # Payment processing and OTP
-gem 'stripe'
 gem 'rotp'
 gem 'twilio-ruby'
 

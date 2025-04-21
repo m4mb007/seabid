@@ -37,9 +37,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def after_sign_up_path_for(resource)
-    # Send OTP email
-    UserMailer.otp_email(resource).deliver_later
-    # Redirect to OTP verification page
-    new_otp_verification_path
+    # Redirect to root path instead of OTP verification
+    root_path
   end
 end 
