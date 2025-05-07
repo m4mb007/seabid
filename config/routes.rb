@@ -6,10 +6,36 @@ Rails.application.routes.draw do
     resources :payments, only: [:new, :create]
   end
 
+<<<<<<< Updated upstream
   resources :bidding_fees, only: [:new, :create]
   
   namespace :admin do
     resources :payments, only: [:index, :show]
+=======
+  resources :payments, only: [:index, :show] do
+    collection do
+      post :webhook
+    end
+    member do
+      get :thank_you
+    end
+  end
+
+  resources :bidding_fees, only: [:new] do
+    collection do
+      get :success
+      get :cancel
+    end
+  end
+  
+  namespace :admin do
+    root to: 'dashboard#index'
+    resources :users
+    resources :plate_numbers
+    resources :bids
+    resources :payments
+    get 'settings', to: 'settings#index'
+>>>>>>> Stashed changes
   end
   
   get 'dashboard', to: 'home#dashboard'
