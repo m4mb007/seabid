@@ -104,6 +104,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_082305) do
     t.string "state"
     t.string "country"
     t.boolean "seafarer", default: false, null: false
+    t.string "company_name"
+    t.string "company_registration_number"
+    t.string "business_license"
+    t.date "seafarer_expiry"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

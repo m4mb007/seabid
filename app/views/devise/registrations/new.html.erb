@@ -63,22 +63,74 @@
             </div>
           </section>
 
-          <!-- Seafarer Status Section -->
+          <!-- Registration Type Section -->
           <section>
             <div class="flex items-center mb-6">
-              <h3 class="text-xl font-semibold text-gray-900">Seafarer Status</h3>
+              <h3 class="text-xl font-semibold text-gray-900">Registration Type</h3>
               <div class="flex-grow ml-4 border-t border-gray-200"></div>
             </div>
-            <div class="bg-indigo-50 rounded-xl p-6 border border-indigo-100">
-              <%= f.label :seafarer, "Are you a registered seafarer?", class: "block text-base font-medium text-gray-700 mb-4" %>
-              <div class="flex items-center gap-8">
-                <div class="flex items-center">
-                  <%= f.radio_button :seafarer, true, class: "h-5 w-5 border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
-                  <%= f.label :seafarer_true, "Yes", class: "ml-3 block text-base text-gray-700" %>
+            <div class="bg-indigo-50 rounded-xl p-6 border border-indigo-100" data-controller="registration-type">
+              <fieldset>
+                <legend class="block text-base font-medium text-gray-700 mb-4">Select your registration type:</legend>
+                <div class="flex items-center gap-8">
+                  <div class="flex items-center">
+                    <%= f.radio_button :seafarer, true, 
+                        id: "registration_type_seafarer",
+                        class: "h-5 w-5 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+                        data: { 
+                          registration_type_target: "seafarerRadio",
+                          action: "click->registration-type#toggle"
+                        } %>
+                    <%= f.label :seafarer_true, "Seafarer", for: "registration_type_seafarer", class: "ml-3 block text-base text-gray-700" %>
+                  </div>
+                  <div class="flex items-center">
+                    <%= f.radio_button :seafarer, false, 
+                        id: "registration_type_agent",
+                        class: "h-5 w-5 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+                        data: { 
+                          registration_type_target: "agentRadio",
+                          action: "click->registration-type#toggle"
+                        } %>
+                    <%= f.label :seafarer_false, "Agent", for: "registration_type_agent", class: "ml-3 block text-base text-gray-700" %>
+                  </div>
                 </div>
-                <div class="flex items-center">
-                  <%= f.radio_button :seafarer, false, class: "h-5 w-5 border-gray-300 text-indigo-600 focus:ring-indigo-500" %>
-                  <%= f.label :seafarer_false, "No", class: "ml-3 block text-base text-gray-700" %>
+              </fieldset>
+
+              <!-- Seafarer Fields -->
+              <div class="mt-6 space-y-6" data-registration-type-target="seafarerFields">
+                <div>
+                  <%= f.label :seafarer_id, "Seafarer ID", class: "block text-base font-medium text-gray-700 mb-2" %>
+                  <%= f.text_field :seafarer_id, 
+                      id: "seafarer_id",
+                      class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-3 px-4" %>
+                </div>
+                <div>
+                  <%= f.label :seafarer_expiry, "Seafarer ID Expiry Date", class: "block text-base font-medium text-gray-700 mb-2" %>
+                  <%= f.date_field :seafarer_expiry, 
+                      id: "seafarer_expiry",
+                      class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-3 px-4" %>
+                </div>
+              </div>
+
+              <!-- Agent Fields -->
+              <div class="mt-6 space-y-6 hidden" data-registration-type-target="agentFields">
+                <div>
+                  <%= f.label :company_name, "Company Name", class: "block text-base font-medium text-gray-700 mb-2" %>
+                  <%= f.text_field :company_name, 
+                      id: "company_name",
+                      class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-3 px-4" %>
+                </div>
+                <div>
+                  <%= f.label :company_registration_number, "Company Registration Number", class: "block text-base font-medium text-gray-700 mb-2" %>
+                  <%= f.text_field :company_registration_number, 
+                      id: "company_registration_number",
+                      class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-3 px-4" %>
+                </div>
+                <div>
+                  <%= f.label :business_license, "Business License Number", class: "block text-base font-medium text-gray-700 mb-2" %>
+                  <%= f.text_field :business_license, 
+                      id: "business_license",
+                      class: "block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base py-3 px-4" %>
                 </div>
               </div>
             </div>
@@ -169,4 +221,28 @@
       <% end %>
     </div>
   </div>
-</div> 
+</div>
+
+<% content_for :head do %>
+  <script>
+    // Stimulus controller for handling registration type toggle
+    application.register("registration-type", class extends Stimulus.Controller {
+      static targets = ["seafarerFields", "agentFields", "seafarerRadio", "agentRadio"]
+
+      connect() {
+        // Set initial state based on saved value or default to seafarer
+        this.toggle()
+      }
+
+      toggle() {
+        if (this.seafarerRadioTarget.checked) {
+          this.seafarerFieldsTarget.classList.remove('hidden')
+          this.agentFieldsTarget.classList.add('hidden')
+        } else if (this.agentRadioTarget.checked) {
+          this.seafarerFieldsTarget.classList.add('hidden')
+          this.agentFieldsTarget.classList.remove('hidden')
+        }
+      }
+    })
+  </script>
+<% end %> 

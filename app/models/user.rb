@@ -21,6 +21,15 @@ class User < ApplicationRecord
   validates :state, presence: true
   validates :country, presence: true
   validate :prevent_admin_from_bidding, if: :admin?
+  
+  # Conditional validations based on user type
+  validates :company_name, :company_registration_number, :business_license,
+            presence: true,
+            if: -> { !seafarer }
+            
+  validates :seafarer_id, :seafarer_expiry,
+            presence: true,
+            if: :seafarer
 
   def can_bid?
     return false if admin?
