@@ -1,50 +1,77 @@
-<div class="min-h-screen bg-white">
+<!-- Main Container -->
+<div class="bg-white">
   <!-- Hero Section -->
-  <div class="mx-auto max-w-7xl px-6 py-16">
-    <div class="mx-auto max-w-2xl text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-6">PELAUT</h1>
-      <h2 class="text-2xl font-semibold text-gray-600 mb-4">Plate Numbers</h2>
-      <p class="text-lg text-gray-600 mb-8">
-        Exclusively for Malaysian seafarers, the PELAUT plate series honors those who chart courses across the seven seas.
-      </p>
-      <div class="flex justify-center gap-x-4">
-        <%= link_to "View Plate Numbers", plate_numbers_path, class: "rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg" %>
-        <% unless user_signed_in? %>
-          <%= link_to "Sign up", new_user_registration_path, class: "rounded-xl px-5 py-2.5 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-sm" %>
-        <% end %>
+  <div class="relative isolate overflow-hidden">
+    <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+      <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-blue-100 to-blue-300 opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-8">PELAUT</h1>
+        <h2 class="text-2xl font-semibold text-gray-600 mb-6">Plate Numbers</h2>
+        <p class="text-lg leading-8 text-gray-600 mb-12">
+          Exclusively for Malaysian seafarers, the PELAUT plate series honors those who chart courses across the seven seas.
+        </p>
+        <div class="flex justify-center gap-x-6">
+          <%= link_to "View Plate Numbers", plate_numbers_path, class: "rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-all duration-300 hover:bg-blue-500 hover:shadow-lg" %>
+          <% unless user_signed_in? %>
+            <%= link_to "Sign up", new_user_registration_path, class: "rounded-xl px-6 py-3 text-base font-semibold text-gray-900 ring-1 ring-inset ring-gray-200 transition-all duration-300 hover:bg-gray-50 hover:shadow-sm" %>
+          <% end %>
+        </div>
       </div>
+    </div>
+
+    <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+      <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-blue-100 to-blue-300 opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"></div>
     </div>
   </div>
 
   <!-- Featured Plates -->
-  <div class="bg-gray-50">
-    <div class="mx-auto max-w-7xl px-6 py-24">
-      <div class="mx-auto max-w-2xl text-center mb-16">
+  <div class="relative bg-gray-50 py-24 sm:py-32">
+    <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+      <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-blue-50 to-blue-100 opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mx-auto max-w-2xl text-center mb-16 sm:mb-20">
         <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Featured Plates</h2>
         <p class="mt-6 text-lg leading-8 text-gray-600">Discover our most exclusive and sought-after plate numbers</p>
       </div>
       <div class="grid gap-8 lg:grid-cols-3">
         <% @featured_plates.each do |plate| %>
-          <div class="group relative overflow-hidden bg-white rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-            <div class="relative">
-              <div class="text-center space-y-6">
-                <h3 class="text-4xl font-bold text-gray-900 mb-4"><%= plate.number %></h3>
-                <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 transition-colors duration-300 group-hover:bg-blue-100 group-hover:text-blue-800">
-                  <%= plate.category.titleize %>
+          <div class="group bg-white rounded-xl shadow-lg border border-gray-200 p-8 transition-all duration-300 hover:shadow-2xl">
+            <div class="text-center mb-6">
+              <div class="bg-yellow-300 border-2 border-gray-800 rounded-lg p-6 mx-auto w-fit transform transition-transform duration-300 group-hover:scale-105">
+                <div class="text-gray-800 font-black text-4xl tracking-widest">
+                  <%= plate.number %>
                 </div>
-                <div class="text-sm text-gray-600 font-medium">
-                  Ends in <%= distance_of_time_in_words(Time.current, plate.end_time) %>
-                </div>
-                <div class="pt-6 border-t border-gray-100">
-                  <p class="text-3xl font-bold text-gray-900 mb-6">
-                    RM <%= number_with_delimiter(plate.current_price) %>
-                  </p>
-                  <%= link_to "View Details", plate_number_path(plate), 
-                      class: "inline-flex items-center justify-center w-full rounded-xl bg-gray-50 px-5 py-3 text-base font-semibold text-gray-900 transition-all duration-300 hover:bg-gray-100 group-hover:shadow-md" %>
-                </div>
+                <div class="text-gray-700 text-sm font-medium mt-2">PELAUT SERIES</div>
               </div>
             </div>
+
+            <div class="flex justify-center mb-5">
+              <span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold shadow-sm">
+                <%= plate.category.titleize %>
+              </span>
+            </div>
+
+            <div class="text-center space-y-2 mb-6">
+              <div class="text-3xl font-bold text-gray-900">
+                RM <%= number_with_delimiter(plate.current_price) %>
+              </div>
+              <div class="text-gray-500 text-sm flex items-center justify-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Ends in <%= distance_of_time_in_words(Time.current, plate.end_time) %>
+              </div>
+            </div>
+
+            <%= link_to plate_number_path(plate), 
+                class: "block w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-center" do %>
+              View Details
+            <% end %>
           </div>
         <% end %>
       </div>
@@ -52,72 +79,78 @@
   </div>
 
   <!-- Categories -->
-  <div class="mx-auto max-w-7xl px-6 py-16">
-    <div class="mx-auto max-w-2xl text-center mb-12">
-      <h2 class="text-3xl font-bold text-gray-900">Browse by Category</h2>
-    </div>
-    <div class="grid gap-4 lg:grid-cols-3">
-      <% @categories.each do |category| %>
-        <%= link_to plate_numbers_path(q: { category_eq: category }), 
-            class: "group relative overflow-hidden rounded-2xl bg-white p-6 transition-all duration-200 hover:shadow-lg" do %>
-          <div class="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-          <div class="relative">
-            <h3 class="text-lg font-semibold text-gray-900"><%= category.titleize %> Numbers</h3>
-            <p class="mt-2 text-sm text-gray-600 group-hover:text-gray-900">Browse Collection →</p>
-          </div>
+  <div class="relative py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mx-auto max-w-2xl text-center mb-16 sm:mb-20">
+        <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Browse by Category</h2>
+        <p class="mt-6 text-lg leading-8 text-gray-600">Find the perfect plate number that matches your preferences</p>
+      </div>
+      <div class="grid gap-6 lg:grid-cols-3">
+        <% @categories.each do |category| %>
+          <%= link_to plate_numbers_path(q: { category_eq: category }), 
+              class: "group bg-white rounded-xl shadow-lg border border-gray-200 p-8 transition-all duration-300 hover:shadow-2xl" do %>
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2"><%= category.titleize %> Numbers</h3>
+                <p class="text-gray-600">
+                  Browse Collection
+                </p>
+              </div>
+              <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <span class="text-blue-700 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </div>
+            </div>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
 
   <!-- Ending Soon -->
-  <div class="bg-gray-50">
-    <div class="mx-auto max-w-7xl px-6 py-16">
-      <div class="mx-auto max-w-2xl text-center mb-12">
-        <h2 class="text-3xl font-bold text-gray-900">Ending Soon</h2>
-        <p class="mt-3 text-lg text-gray-600">Don't miss out on these numbers</p>
+  <div class="relative bg-gray-50 py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="mx-auto max-w-2xl text-center mb-16 sm:mb-20">
+        <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Ending Soon</h2>
+        <p class="mt-6 text-lg leading-8 text-gray-600">Don't miss out on these exclusive numbers</p>
       </div>
-      <div class="grid gap-6 lg:grid-cols-3">
+      <div class="grid gap-8 lg:grid-cols-3">
         <% @ending_soon.each do |plate| %>
-          <div class="group relative bg-white rounded-2xl p-6 transition-all duration-200 hover:shadow-xl">
-            <div class="flex justify-between items-start mb-5">
-              <div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-2"><%= plate.number %></h3>
-                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700">
-                  <%= plate.category.titleize %>
+          <div class="group bg-white rounded-xl shadow-lg border border-gray-200 p-8 transition-all duration-300 hover:shadow-2xl">
+            <div class="text-center mb-6">
+              <div class="bg-yellow-300 border-2 border-gray-800 rounded-lg p-6 mx-auto w-fit transform transition-transform duration-300 group-hover:scale-105">
+                <div class="text-gray-800 font-black text-4xl tracking-widest">
+                  <%= plate.number %>
                 </div>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-medium text-red-600">Ends in</p>
-                <p class="text-sm font-medium"><%= distance_of_time_in_words(Time.current, plate.end_time) %></p>
+                <div class="text-gray-700 text-sm font-medium mt-2">PELAUT SERIES</div>
               </div>
             </div>
-            <div class="pt-5 border-t border-gray-100">
-              <p class="text-2xl font-semibold text-gray-900 mb-4">
+
+            <div class="flex justify-between items-center mb-5">
+              <span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold shadow-sm">
+                <%= plate.category.titleize %>
+              </span>
+              <div class="bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <%= distance_of_time_in_words(Time.current, plate.end_time) %>
+              </div>
+            </div>
+
+            <div class="text-center space-y-2 mb-6">
+              <div class="text-3xl font-bold text-gray-900">
                 RM <%= number_with_delimiter(plate.current_price) %>
-              </p>
-              <%= link_to "View Details", plate_number_path(plate), 
-                  class: "inline-flex items-center justify-center w-full rounded-xl bg-gray-50 px-4 py-2.5 text-sm font-semibold text-gray-900 transition-all hover:bg-gray-100 group-hover:shadow-sm" %>
+              </div>
+              <div class="text-gray-500 text-sm">Limited time offer</div>
             </div>
+
+            <%= link_to plate_number_path(plate), 
+                class: "block w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-center" do %>
+              View Details
+            <% end %>
           </div>
         <% end %>
       </div>
-    </div>
-  </div>
-
-  <!-- Newsletter -->
-  <div class="mx-auto max-w-7xl px-6 py-16">
-    <div class="mx-auto max-w-xl text-center">
-      <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay Updated</h2>
-      <p class="text-lg text-gray-600 mb-6">Subscribe to receive updates about new plates and auctions</p>
-      <%= form_tag subscribe_newsletter_path, class: "flex gap-x-4 justify-center", data: { turbo: false } do %>
-        <input type="email" name="email" required 
-               class="min-w-0 flex-auto rounded-xl border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 transition-all placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600"
-               placeholder="Enter your email">
-        <button type="submit" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg">
-          Subscribe
-        </button>
-      <% end %>
     </div>
   </div>
 </div>
