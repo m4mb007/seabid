@@ -14,7 +14,7 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :ic_number, presence: true, uniqueness: true
-  validates :seafarer_id, presence: true, uniqueness: true
+  validates :seafarer, inclusion: { in: [true, false], message: "status must be specified" }
   validates :phone_number, presence: true
   validates :street, presence: true
   validates :postcode, presence: true
