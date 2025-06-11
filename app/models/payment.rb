@@ -2,12 +2,11 @@ class Payment < ApplicationRecord
   belongs_to :user
   belongs_to :plate_number
   
-  attr_accessor :stripe_token
+  attr_accessor :stripe_token, :payment_intent_id
   
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, inclusion: { in: %w[pending processing completed failed] }
   validate :user_must_be_highest_bidder, if: :auction_payment?
-  validates :stripe_token, presence: true, on: :create
   
   def process_payment
     return false if skip_validation
@@ -15,31 +14,48 @@ class Payment < ApplicationRecord
     begin
       update!(status: 'processing')
       
-      # This would integrate with Stripe in production
-      charge = Stripe::Charge.create(
-        amount: (amount * 100).to_i,
+      # Create a Payment Intent for FPX payment
+      payment_intent = Stripe::PaymentIntent.create(
+        amount: (amount * 100).to_i, # amount in cents
         currency: 'myr',
-        source: stripe_token,
-        description: "Payment for plate number #{plate_number.number}"
+        payment_method_types: ['fpx'],
+        metadata: {
+          plate_number: plate_number.number,
+          user_email: user.email
+        }
       )
       
-      if charge.status == 'succeeded'
+      # Store the payment intent ID
+      update!(payment_intent_id: payment_intent.id)
+      
+      true
+    rescue Stripe::StripeError => e
+      handle_payment_error(e.message)
+      false
+    rescue => e
+      handle_payment_error("Payment processing failed: #{e.message}")
+      false
+    end
+  end
+
+  def confirm_payment(payment_intent_id)
+    begin
+      payment_intent = Stripe::PaymentIntent.retrieve(payment_intent_id)
+      
+      if payment_intent.status == 'succeeded'
         plate_number.update!(status: 'booked')
         update!(status: 'completed')
         true
       else
         update!(status: 'failed')
-        errors.add(:base, "Payment failed: #{charge.failure_message}")
+        errors.add(:base, "Payment failed: #{payment_intent.last_payment_error&.message}")
         false
       end
-    rescue Stripe::CardError => e
+    rescue Stripe::StripeError => e
       handle_payment_error(e.message)
       false
-    rescue Stripe::InvalidRequestError => e
-      handle_payment_error("Invalid payment request: #{e.message}")
-      false
     rescue => e
-      handle_payment_error("Payment processing failed: #{e.message}")
+      handle_payment_error("Payment confirmation failed: #{e.message}")
       false
     end
   end

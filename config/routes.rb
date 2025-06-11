@@ -1,16 +1,30 @@
 Rails.application.routes.draw do
   devise_for :users
   
+  resource :profile, only: [:edit, :update], controller: 'profiles'
+  resource :password, only: [:edit, :update], controller: 'passwords'
+  
   resources :plate_numbers do
     resources :bids, only: [:new, :create]
     resources :payments, only: [:new, :create]
   end
 
+  resources :payments, only: [] do
+    get :thank_you, on: :member
+  end
+
   resources :bidding_fees, only: [:new, :create]
   
   namespace :admin do
+    root to: 'dashboard#index'
+    resources :users
+    resources :settings, only: [:index, :update]
     resources :payments, only: [:index, :show]
+    resources :plate_numbers
   end
+  
+  # Stripe webhook
+  post 'stripe/webhook', to: 'payments#webhook'
   
   get 'dashboard', to: 'home#dashboard'
   get 'my_bids', to: 'home#my_bids'
@@ -30,4 +44,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # Newsletter subscription
+  post 'newsletters/subscribe', to: 'newsletters#subscribe', as: :subscribe_newsletter
 end

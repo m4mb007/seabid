@@ -11,12 +11,24 @@ class User < ApplicationRecord
   
   validates :email, presence: true, uniqueness: true
   validates :encrypted_password, presence: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :ic_number, presence: true, uniqueness: true
+  validates :seafarer_id, presence: true, uniqueness: true
+  validates :phone_number, presence: true
+  validates :street, presence: true
+  validates :postcode, presence: true
+  validates :state, presence: true
+  validates :country, presence: true
+  validate :prevent_admin_from_bidding, if: :admin?
 
   def can_bid?
+    return false if admin?
     bidding_fee_paid?
   end
 
   def pay_bidding_fee(token)
+    return false if admin?
     return true if bidding_fee_paid?
     return false if token.blank?
 
@@ -53,5 +65,21 @@ class User < ApplicationRecord
 
   def admin?
     admin
+  end
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  def full_address
+    [street, postcode, state, country].compact.join(', ')
+  end
+
+  private
+
+  def prevent_admin_from_bidding
+    if bids.any? || payments.any?
+      errors.add(:base, 'Administrators cannot place bids or make purchases')
+    end
   end
 end

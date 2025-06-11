@@ -1,0 +1,68 @@
+<header class="bg-white shadow-sm">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+  <!-- Logo & Navigation in 1 flex group -->
+  <div class="flex items-center space-x-8">
+    <!-- Logo -->
+    <%= link_to root_path, class: "flex items-center" do %>
+      <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">SeaBid</span>
+    <% end %>
+
+    <!-- Main Navigation -->
+    <nav class="hidden md:flex space-x-6">
+      
+      <% if user_signed_in? %>
+        <% if current_user.admin? %>
+          <%= link_to "Admin Dashboard", admin_root_path, class: "#{nav_class(admin_root_path)}" %>
+        <% else %>
+        <%= link_to "Home", root_path, class: "#{nav_class(root_path)}" %>
+        <%= link_to "Plates", plate_numbers_path, class: "#{nav_class(plate_numbers_path)}" %>
+          <%= link_to "Dashboard", dashboard_path, class: "#{nav_class(dashboard_path)}" %>
+          <%= link_to "Bids", my_bids_path, class: "#{nav_class(my_bids_path)}" %>
+          <%= link_to "Payments", my_payments_path, class: "#{nav_class(my_payments_path)}" %>
+          <%= link_to "Profile", edit_profile_path, class: "#{nav_class(edit_profile_path)}" %>
+        <% end %>
+      <% end %>
+    </nav>
+  </div>
+
+  <!-- User Menu -->
+  <div class="flex items-center gap-4">
+    <% if user_signed_in? %>
+      <div class="hidden md:block text-sm text-gray-500"><%= current_user.full_name %></div>
+      <div class="rounded-full bg-blue-100 px-3 py-2 text-blue-700 text-sm font-bold">
+        <%= current_user.email.first.upcase %>
+      </div>
+      <%= button_to destroy_user_session_path, method: :delete, class: "text-sm px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100" do %>
+        Sign out
+      <% end %>
+    <% else %>
+      <%= link_to "Sign In", new_user_session_path, class: "text-sm px-3 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500" %>
+      <%= link_to "Sign Up", new_user_registration_path, class: "text-sm px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-100" %>
+    <% end %>
+  </div>
+</div>
+</div>
+
+  <!-- Mobile Navigation Menu -->
+  <div class="block md:hidden border-t border-gray-200">
+    <nav class="flex overflow-x-auto py-3 px-4">
+      <%= link_to "Home", root_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+      <%= link_to "Plates", plate_numbers_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{controller_name == 'plate_numbers' && action_name == 'index' ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+      
+      <% if user_signed_in? %>
+        <% if current_user.admin? %>
+          <%= link_to "Admin Dashboard", admin_root_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(admin_root_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+          <%= link_to "Users", admin_users_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(admin_users_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+          <%= link_to "Settings", admin_settings_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(admin_settings_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+        <% else %>
+          <%= link_to "Dashboard", dashboard_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(dashboard_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+          <%= link_to "Bids", my_bids_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(my_bids_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+          <%= link_to "Payments", my_payments_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(my_payments_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+          <%= link_to "Profile", edit_profile_path, class: "whitespace-nowrap px-3 py-2 text-sm font-medium rounded-md #{current_page?(edit_profile_path) ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}" %>
+        <% end %>
+      <% end %>
+    </nav>
+  </div>
+</header>
+
