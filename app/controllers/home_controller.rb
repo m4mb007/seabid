@@ -5,6 +5,14 @@ class HomeController < ApplicationController
     @featured_plates = PlateNumber.available.order(created_at: :desc).limit(6)
     @ending_soon = PlateNumber.ending_soon.limit(6)
     @categories = %w[prime popular main]
+    
+    # Statistics for the homepage
+    @stats = {
+      active_plates: PlateNumber.available.count,
+      registered_users: User.count,
+      total_bids: Bid.count,
+      successful_transactions: Payment.where(status: 'completed').count
+    }
   end
   
   def dashboard
@@ -22,11 +30,18 @@ class HomeController < ApplicationController
   end
   
   def my_bids
-    @bids = current_user.bids.includes(:plate_number).order(created_at: :desc)
+    @bids = current_user.bids
+             .includes(:plate_number)
+             .order(created_at: :desc)
+             .page(params[:page])
   end
   
   def my_payments
-    @payments = current_user.payments.includes(:plate_number).order(created_at: :desc)
+    @payments = current_user.payments
+                .includes(:plate_number)
+                .order(created_at: :desc)
+                .page(params[:page])
+                .per(20)
   end
 
   # app/controllers/home_controller.rb

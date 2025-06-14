@@ -86,7 +86,3 @@
 </div>
 
 <%= hidden_field_tag 'payment[stripe_token]', '', id: 'stripe_token' %>
-
-<script>
-document.getElementById('stripe_token').value = result.token.id;
-</script>
